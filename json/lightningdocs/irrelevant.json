@@ -1,0 +1,27 @@
+{
+    "Superhero": "The Flash",
+    "Human Name": "Barry Allen",
+    "Powers": [
+        "Super speed",
+        "Super brainpower",
+        "Super strength"
+    ],
+    "loan": {
+        "loanNumber": "821-56-HWKA",
+        "closingDate": "2021-10-15",
+        "loanTerm": 120,
+        "loanAmount": 250499,
+        "favoriteThings": {
+            "foods": [
+                "Apples",
+                "Bananas",
+                "Carrots"
+            ],
+            "animals": [
+                "Aardvarks",
+                "Bears",
+                "Cats"
+            ]
+        }
+    }
+}

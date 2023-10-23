@@ -1,0 +1,19 @@
+{
+    "lenderContact": {
+        "street": "3167 Tree Frog Lane",
+        "city": "Kansas City",
+        "state": "Montana",
+        "zip": "64119",
+        "name": "Norma Johnson Lending"
+    },
+    "interest": {
+        "rate": 6.125,
+        "ioPeriod": 12
+    },
+    "loan": {
+        "loanNumber": "539-56-XAJT",
+        "closingDate": "2021-06-07",
+        "loanTerm": 360,
+        "loanAmount": 400000
+    }
+}
