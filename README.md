@@ -1,3 +1,7 @@
+## Quick-start
+
+A static, web hosted rendering of the Jupyter Notebook can be found [here][NBViewer-url] if you just want to quickly read the notebook.
+
 ## About The Project
 
 The goal of this repository is to outline the various ways to interact with both the LightningDocs and Knackly API for your document automation needs. Examples are given in Python, but the underlying RESTful requests will work the same in any programming language.
@@ -51,3 +55,4 @@ In order to run the majority of the cells in the notebook, you must have various
 [Python.com]: https://www.python.org/
 [Python-url]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
 [Anaconda-url]: https://www.anaconda.com/download
+[NBViewer-url]: https://nbviewer.org/github/LightningDocs/LightningDocs-Knackly-API/blob/master/main.ipynb
