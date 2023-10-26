@@ -23,7 +23,7 @@ In order to run the majority of the cells in the notebook, you must have various
 
 1. Clone or manually download the repo
    ```sh
-   git clone https://github.com/blismatic/LightningDocs-Knackly-API.git
+   git clone https://github.com/LightningDocs/LightningDocs-Knackly-API.git
    ```
 2. Start a Jupyter Server by running the Anaconda Prompt terminal and entering the following commands
    ```sh
