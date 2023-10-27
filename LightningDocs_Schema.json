@@ -1,0 +1,199 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "states": {
+      "enum": [
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+        "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey",
+        "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina",
+        "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming",
+        "District of Columbia"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "borrowers": {
+      "title": "Information for Borrowers",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Borrower Full Name"
+          },
+          "entityType": {
+            "type": "string",
+            "title": "Type of Entity",
+            "enum": [
+              "individual",
+              "corporation",
+              "limited liability company"
+            ]
+          },
+          "formationState": {
+            "type": "string",
+            "title": "State of Formation",
+            "description": "The state of formation for certain kinds of entities.",
+            "$ref": "#/definitions/states"
+          },
+          "signer": {
+            "type": "string",
+            "title": "Signer for borrower"
+          },
+          "signerTitle": {
+            "type": "string",
+            "title": "Signer's title"
+          }
+        },
+        "required": ["name", "entityType"],
+        "if": {
+          "properties": {
+            "entityType": {
+              "enum": ["corporation", "limited liability company"]
+            }
+          }
+        },
+        "then": {
+          "required": ["formationState", "signer", "signerTitle"]
+        }
+      }
+    },
+    "collateralProperties": {
+      "title": "Collateral Properties",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string",
+            "title": "Street Address"
+          },
+          "city": {
+            "type": "string",
+            "title": "City"
+          },
+          "state": {
+            "type": "string",
+            "title": "State",
+            "$ref": "#/definitions/states"
+          },
+          "county": {
+            "type": "string",
+            "title": "County"
+          },
+          "zip": {
+            "type": "string",
+            "title": "Zip"
+          },
+          "owners": {
+            "title": "Owners",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "owner": {
+                  "type": "string",
+                  "title": "Owner Name",
+                  "description": "The owner's name exactly as it appears in the Borrower section. If more than one borrower has the same name, this will find the lattermost."
+                },
+                "vesting": {
+                  "type": "string",
+                  "title": "Vested As",
+                  "description": "How the owner is vested, eg, 'a single man' or 'a married woman as her sole and separate property'. See lightningdocs for other examples, but the text can be anything; it need not be among the options given in lightningdocs. IMPORTANT: answer 'married' (without the quotes) for the FIRST of two married individuals vested together, then give the actual vesting for the second of the two. This will combine them together for vesting."
+                }
+              },
+              "required": ["owner"]
+            }
+          }
+        },
+        "required": ["street", "city", "state", "zip"],
+        "if": {
+          "properties": {
+            "state": {
+              "not": {
+                "const": "District of Columbia"
+              }
+            }
+          }
+        },
+        "then": {
+          "required": ["county"]
+        }
+      }
+    },
+    "lenderContact": {
+      "title": "Lender",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of Lender"
+        },
+        "street": {
+          "type": "string",
+          "title": "Street Address"
+        },
+        "city": {
+          "type": "string",
+          "title": "City"
+        },
+        "state": {
+          "type": "string",
+          "title": "State",
+          "$ref": "#/definitions/states"
+        },
+        "zip": {
+          "type": "string",
+          "title": "Zip"
+        }
+      },
+      "required": ["name", "street", "city", "state", "zip"]
+    },
+    "loan": {
+      "title": "Loan Information",
+      "type": "object",
+      "properties": {
+        "loanNumber": {
+          "type": "string",
+          "title": "Loan Number"
+        },
+        "closingDate": {
+          "type": "string",
+          "format": "date",
+          "title": "Closing Date"
+        },
+        "loanTerm": {
+          "type": "number",
+          "title": "Loan Term"
+        },
+        "loanAmount": {
+          "type": "number",
+          "title": "Loan Amount"
+        }
+      },
+      "required": ["closingDate", "loanTerm", "loanAmount"]
+    },
+    "interest": {
+      "title": "Loan Interest",
+      "type": "object",
+      "properties": {
+        "rate": {
+          "type": "number",
+          "title": "Interest Rate"
+        },
+        "ioPeriod": {
+          "type": "number",
+          "title": "Months of Interest Only Payment"
+        }
+      },
+      "required": ["rate"]
+    }
+  },
+  "required": ["borrowers", "collateralProperties", "lenderContact", "loan", "interest"]
+}
