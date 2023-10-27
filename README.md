@@ -16,7 +16,7 @@ This project was built using...
 
 ## Getting Started
 
-In order to run the majority of the cells in the notebook, you must have various pieces of information given to you by LightningDocs. This will includes a `version`, `tenancy`, `keyID`, `secret`, and `refresh_token`.
+In order to run the majority of the cells in the notebook, you must have various pieces of information given to you by LightningDocs. This will includes a `version`, `keyID`, `tenancy`, `secret`, `catalog_name`, `app_name` and `refresh_token`.
 
 ### Prerequisites
 
