@@ -1,5 +1,6 @@
 # Project specific
 config.txt
+verification.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

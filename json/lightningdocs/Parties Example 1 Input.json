@@ -1,0 +1,36 @@
+{
+  "borrowerInformation": {
+    "noticeTo": "Borrower",
+    "address": {
+      "street": "123 Main Street",
+      "city": "Irvine",
+      "state": "California",
+      "zip": "92618"
+    },
+    "isAnyBorrowerIRA": true,
+    "borrowers": [
+      {
+        "name": "John Smith",
+        "entityType": "individual"
+      }
+    ]
+  },
+  "nonBorrowerOwners": [
+    {
+      "name": "Jan Smith",
+      "entityType": "individual"
+    }
+  ],
+  "guarantorInformation": {
+    "isGuaranty": true,
+    "guarantors": [
+      {
+        "name": "Carol Smith",
+        "entityType": "individual",
+        "guarantorType": "Limited",
+        "spousalSignature": false,
+        "addressType": "Borrower"
+      }
+    ]
+  }
+}
