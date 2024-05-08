@@ -1,0 +1,169 @@
+{
+  "enableFeatures": {
+    "enablePropertyTaxReserve": true,
+    "enablePropertyInsuranceReserve": true,
+    "enablePropertyManagement": true,
+    "enableLockbox": true,
+    "enableNoFill": true,
+    "enableRemoveArbitration": true,
+    "enableDSCR": true,
+    "enableCompletionGuaranty": true,
+    "enableScheduleOfProperties": true,
+    "enableRemoveCertificates": true
+  },
+  "borrowerInformation": {
+    "borrowers": [
+      {
+        "complexSigners": [
+          {
+            "name": "Bill Spooner",
+            "signerTitle": "President ",
+            "entityType": "individual"
+          }
+        ],
+        "name": "Tubes, Inc",
+        "entityType": "corporation",
+        "formationState": "Florida"
+      }
+    ],
+    "noticeTo": "Borrower",
+    "address": {
+      "street": "104 Lovers Lane",
+      "city": "Jacksonville",
+      "state": "Florida",
+      "zip": "32919"
+    }
+  },
+  "guarantorInformation": {
+    "isGuaranty": true,
+    "guarantors": [
+      {
+        "name": "Bill Spooner",
+        "entityType": "individual",
+        "addressType": "Borrower",
+        "guarantorType": "Full",
+        "usesComplexSigners": true
+      },
+      {
+        "name": "Anna Beth Spooner",
+        "entityType": "individual",
+        "guarantorType": "Full",
+        "addressType": "Borrower",
+        "usesComplexSigners": true
+      }
+    ]
+  },
+  "lenderInformation": {
+    "name": "Geraci Lending, LLC",
+    "entityType": "limited liability company",
+    "state": "Delaware",
+    "noticeTo": "Lender",
+    "noticeRecipient": "Geraci Lending, LLC, a Delaware limited liability company",
+    "address": {
+      "street": "90 Discovery",
+      "city": "Irvine",
+      "state": "California",
+      "zip": "92618"
+    }
+  },
+  "collateral": {
+    "collateralProperties": [
+      {
+        "owners": [
+          {
+            "owner": "Tubes, Inc"
+          }
+        ],
+        "address": {
+          "street": "106 Lovers Lane",
+          "city": "Jacksonville",
+          "state": "Florida",
+          "zip": "32919"
+        },
+        "county": "Nassau",
+        "propertyID": "26-18-59",
+        "lienPosition": 1
+      }
+    ],
+    "governingLawState": "Florida",
+    "noteCounty": "Duval"
+  },
+  "loan": {
+    "loanNumber": "201525",
+    "closingDate": "2024-03-28",
+    "term": 360,
+    "amount": 1000000,
+    "amortization": 360,
+    "rate": 12,
+    "defaultRate": 16.25,
+    "calculation": "30/360"
+  },
+  "features": {
+    "interestReserve": "Monthly Payments",
+    "interestReserveAmount": 3,
+    "prepaymentPremium": "Linear Step",
+    "prepaymentTerm1": 5,
+    "isPrepaymentMinimumPayment": true
+  },
+  "settlement": {
+    "perDiemDelivery": "Net Funded to Lender",
+    "lenderFees": [
+      {
+        "amount": 3000,
+        "feeDescription": "Origination",
+        "delivery": "To Be Net Funded"
+      },
+      {
+        "amount": 2000,
+        "feeDescription": "Processing",
+        "delivery": "To Be Net Funded"
+      }
+    ],
+    "otherFees": [
+      {
+        "amount": 1000,
+        "feeDescription": "Broker Fee",
+        "payee": "The Irvine Lending Company"
+      }
+    ]
+  },
+  "isACH": true,
+  "servicerInformation": {
+    "servicer": "Selene"
+  },
+  "titleInformation": {
+    "name": "Collins Title Services",
+    "contact": "Seth Collins",
+    "email": "seth@email.com",
+    "address": {
+      "street": "228 Balboa Ave",
+      "city": "Newport",
+      "state": "California",
+      "zip": "90252"
+    },
+    "orderNumber": "2556251",
+    "reportDate": "2024-03-06",
+    "exceptionItems": "1 through 6",
+    "altaEndorsements": "ALTA 8.1 & ALTA 9",
+    "isSingleTitleReport": true
+  },
+  "preparerInformation": {
+    "name": "Trevor Kneisly",
+    "email": "trevor@email.com",
+    "addressType": "Lender"
+  },
+  "closingContact": {
+    "name": "Trevor Kneisly",
+    "email": "trevor@email.com"
+  },
+  "additionalDocuments": {
+    "isLoanSale": true,
+    "loanSale": "After",
+    "assignee": "Other"
+  },
+  "documentCustomization": {
+    "isNoFillNonOwnerOccupancy": true,
+    "isNoFillBusinessPurpose": true,
+    "isRemoveArbitration": true
+  }
+}

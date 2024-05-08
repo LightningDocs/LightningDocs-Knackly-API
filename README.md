@@ -4,7 +4,7 @@ A static, web hosted rendering of the Jupyter Notebook can be found [here][NBVie
 
 ## About The Project
 
-The goal of this repository is to outline the various ways to interact with both the LightningDocs and Knackly API for your document automation needs. Examples are given in Python, but the underlying RESTful requests will work the same in any programming language.
+The goal of this repository is to outline the various ways to interact with both the Lightning Docs and Knackly API for your document automation needs. Examples are given in Python, but the underlying RESTful requests will work the same in any programming language.
 
 ### Built with
 
@@ -16,7 +16,7 @@ This project was built using...
 
 ## Getting Started
 
-In order to run the majority of the cells in the notebook, you must have various pieces of information given to you by LightningDocs. This will includes a `version`, `keyID`, `tenancy`, `secret`, `catalog_name`, `app_name` and `refresh_token`.
+In order to run the majority of the cells in the notebook, you must have various pieces of information given to you by Lightning Docs. This will includes a `version`, `keyID`, `tenancy`, `secret`, `catalog_name`, `app_name` and `refresh_token`.
 
 ### Prerequisites
 
