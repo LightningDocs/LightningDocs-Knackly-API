@@ -1,4 +1,5 @@
 {
+  "isTestFile": true,
   "borrowerInformation": {
     "noticeTo": "Borrower",
     "address": {

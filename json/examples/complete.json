@@ -1,4 +1,5 @@
 {
+  "isTestFile": true,
   "enableFeatures": {
     "enablePropertyTaxReserve": true,
     "enablePropertyInsuranceReserve": true,
