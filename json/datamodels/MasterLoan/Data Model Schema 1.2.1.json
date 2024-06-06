@@ -1,0 +1,2368 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "definitions": {
+    "states": {
+      "enum": [
+        "Alabama",
+        "Alaska",
+        "Arizona",
+        "Arkansas",
+        "California",
+        "Colorado",
+        "Connecticut",
+        "Delaware",
+        "Florida",
+        "Georgia",
+        "Hawaii",
+        "Idaho",
+        "Illinois",
+        "Indiana",
+        "Iowa",
+        "Kansas",
+        "Kentucky",
+        "Louisiana",
+        "Maine",
+        "Maryland",
+        "Massachusetts",
+        "Michigan",
+        "Minnesota",
+        "Mississippi",
+        "Missouri",
+        "Montana",
+        "Nebraska",
+        "Nevada",
+        "New Hampshire",
+        "New Jersey",
+        "New Mexico",
+        "New York",
+        "North Carolina",
+        "North Dakota",
+        "Ohio",
+        "Oklahoma",
+        "Oregon",
+        "Pennsylvania",
+        "Rhode Island",
+        "South Carolina",
+        "South Dakota",
+        "Tennessee",
+        "Texas",
+        "Utah",
+        "Vermont",
+        "Virginia",
+        "Washington",
+        "West Virginia",
+        "Wisconsin",
+        "Wyoming",
+        "District of Columbia"
+      ]
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string",
+          "title": "Street"
+        },
+        "city": {
+          "type": "string",
+          "title": "City"
+        },
+        "state": {
+          "type": "string",
+          "title": "State",
+          "$ref": "#/definitions/states"
+        },
+        "zip": {
+          "type": "string",
+          "title": "Zip"
+        }
+      }
+    },
+    "entityTypes": {
+      "enum": [
+        "individual",
+        "corporation",
+        "limited liability company",
+        "series limited liability company",
+        "limited partnership",
+        "limited liability partnership",
+        "general partnership",
+        "trust",
+        "joint venture"
+      ]
+    },
+    "grantors": {
+      "type": "object",
+      "title": "Grantors",
+      "description": "The grantors definition is used for the 'borrowers' array within 'borrowerInformation' and the nonBorrowerOwners array, as those two arrays have identical properties.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Grantor Full Name"
+        },
+        "trustVestingName": {
+          "type": "string",
+          "title": "Full Trust Name -- include name of trustee(s) and their title(s).",
+          "description": "Only needed if entityType == 'trust'"
+        },
+        "entityType": {
+          "type": "string",
+          "title": "Type of Entity",
+          "$ref": "#/definitions/entityTypes"
+        },
+        "formationState": {
+          "type": "string",
+          "title": "State of Formation",
+          "description": "The state of formation for certain kinds of entities. Only needed if entityType != 'individual' && entityType != 'trust'",
+          "$ref": "#/definitions/states"
+        },
+        "isPowerOfAttorney": {
+          "type": "boolean",
+          "title": "Is Grantor using a Power of Attorney to Sign?",
+          "description": "Only used if entityType == 'individual'"
+        },
+        "attorneyInFact": {
+          "type": "string",
+          "title": "Attorney-in-Fact",
+          "description": "Only used if entityType == 'individual' && isPowerOfAttorney == true"
+        },
+        "isTranslator": {
+          "type": "boolean",
+          "title": "Does this Grantor require a translator?",
+          "description": "Only used if entityType == 'individual'"
+        },
+        "complexSigners": {
+          "type": "array",
+          "title": "Signers for Grantor (complex)",
+          "description": "A more complex interface for sending signer information for an entity. Only relevant if enableFeatures.enableComplexSigners == true. To use this, 'usesComplexSigners': true should also be sent as a property of each Grantor (if you want to run validation against the schema). Should be used in combination with complexOwners.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "signerTitle": {
+                "type": "string",
+                "title": "Title"
+              },
+              "entityType": {
+                "type": "string",
+                "title": "Entity type",
+                "$ref": "#/definitions/entityTypes"
+              },
+              "formationState": {
+                "type": "string",
+                "title": "Organization state",
+                "description": "The state of formation for certain kinds of entities. Only needed if entityType != 'individual' && entityType != 'trust'",
+                "$ref": "#/definitions/states"
+              },
+              "isTranslator": {
+                "type": "boolean",
+                "title": "Translator Required?",
+                "description": "Only used if entityType == 'individual' for this particular complex signer."
+              },
+              "signers": {
+                "type": "array",
+                "title": "Signers for Signers for Grantor",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "title": "Name"
+                    },
+                    "signerTitle": {
+                      "type": "string",
+                      "title": "Title"
+                    },
+                    "entityType": {
+                      "type": "string",
+                      "title": "Entity type",
+                      "$ref": "#/definitions/entityTypes"
+                    },
+                    "formationState": {
+                      "type": "string",
+                      "title": "Organization state",
+                      "description": "The state of formation for certain kinds of entities. Only needed if entityType != 'individual' && entityType != 'trust'",
+                      "$ref": "#/definitions/states"
+                    },
+                    "isTranslator": {
+                      "type": "boolean",
+                      "title": "Translator Required?",
+                      "description": "Only needed if entityType == 'individual' for this signer."
+                    },
+                    "signers": {
+                      "type": "array",
+                      "title": "Signers for Signers for Signers for Grantor",
+                      "description": "At this third level of nesting, we assume that the following signers are individuals.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "title": "Name"
+                          },
+                          "signerTitle": {
+                            "type": "string",
+                            "title": "Title"
+                          },
+                          "isTranslator": {
+                            "type": "boolean",
+                            "title": "Translator Required?"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "isTestFile": {
+      "type": "boolean",
+      "title": "Is this a test file?",
+      "description": "Makes the file a test file. Test files are not billed by Lightning Docs. Using this feature for real transactions is a violation of the Lightning Docs license agreement."
+    },
+    "disableFeatures": {
+      "type": "object",
+      "description": "NOT YET AVAILABLE. This object contains properties that allow you to disable the user's control over loan features that are normally viewable by the user. It does NOT control whether or not a given loan feature is actually on or off for the transaction. Only use this section to turn off access to loan features-making them unavailable when a user views the interview-by making the appropriate value 'true' (this is only useful if you expect your users to view the interview; there's no reason to turn off permissions to features you simply don't intend to use).",
+      "properties": {
+        "disableLoanTerm": {
+          "type": "boolean",
+          "title": "Loan Term (in months)"
+        },
+        "disableInterestRate": {
+          "type": "boolean",
+          "title": "Interest Rate %"
+        },
+        "disableIsIOPeriod": {
+          "type": "boolean",
+          "title": "Is there an interest-only-period?"
+        },
+        "disableInterestOnlyPeriod": {
+          "type": "boolean",
+          "title": "Interest-Only Period (in months)"
+        },
+        "disableAmortizationPeriod": {
+          "type": "boolean",
+          "title": "Amortization Period (in months)"
+        },
+        "disableVariableRate": {
+          "type": "boolean",
+          "title": "Variable Rate?"
+        },
+        "disableManualFirstPaymentDate": {
+          "type": "boolean",
+          "title": "Manually enter First Payment Date"
+        },
+        "disableConstruction": {
+          "type": "boolean",
+          "title": "Is Lender reserving Construction funds?"
+        },
+        "disableLenderInformation": {
+          "type": "boolean",
+          "title": "Lender Information"
+        },
+        "disablePrepaymentPenalty": {
+          "type": "boolean",
+          "title": "Prepayment Penalty"
+        },
+        "disableGoverningLaw": {
+          "type": "boolean",
+          "title": "Governing Law State and Lender's County for Arbitration"
+        },
+        "disableLoanSale": {
+          "type": "boolean",
+          "title": "Loan Sale (Assignments and Allonge)"
+        },
+        "disableImpounds": {
+          "type": "boolean",
+          "title": "Tax and Insurance Impounds"
+        },
+        "disableBridgeToPerm": {
+          "type": "boolean",
+          "title": "Bridge to Perm Loans"
+        }
+      }
+    },
+    "enableFeatures": {
+      "type": "object",
+      "description": "This object contains properties that allow you to enable features normally not viewable by the user. It does NOT, on its own, control whether or not a given loan feature is actually on or off for the transaction. The following loan features are UNAVAILABLE by default. Make features available to the user by making the appropriate value 'true'. (It is best practice to enable visibility for any features to be used in a given transaction). Generally speaking these features should only be enabled after consultation with Geraci LLP legal counsel.",
+      "properties": {
+        "enableLenderReserve": {
+          "type": "boolean",
+          "title": "Lender General Reserve"
+        },
+        "enablePropertyTaxReserve": {
+          "type": "boolean",
+          "title": "Property Tax Reserve"
+        },
+        "enablePropertyInsuranceReserve": {
+          "type": "boolean",
+          "title": "Property Insurance Reserve"
+        },
+        "enableCapExReserve": {
+          "type": "boolean",
+          "title": "Capital Expenditure Reserve"
+        },
+        "enableAppraisalReserve": {
+          "type": "boolean",
+          "title": "Appraisal Reserve"
+        },
+        "enableDefaultReserve": {
+          "type": "boolean",
+          "title": "Default Reserve"
+        },
+        "enableOccupancyReserve": {
+          "type": "boolean",
+          "title": "Occupancy Reserve"
+        },
+        "enableImprovementReserve": {
+          "type": "boolean",
+          "title": "Tenant Improvement Reserve"
+        },
+        "enableBorrowerServicingFees": {
+          "type": "boolean",
+          "title": "Borrower Responsible for all Servicing Fees"
+        },
+        "enableExitFee": {
+          "type": "boolean",
+          "title": "Exit Fee"
+        },
+        "enableTerminationFee": {
+          "type": "boolean",
+          "title": "Termination Fee"
+        },
+        "enableDeferredBrokerFees": {
+          "type": "boolean",
+          "title": "Deferred Broker Fees"
+        },
+        "enableSBALoan": {
+          "type": "boolean",
+          "title": "SBA Loan"
+        },
+        "enablePropertyManagement": {
+          "type": "boolean",
+          "title": "Assignment of Property Management Agreement"
+        },
+        "enableLeaseholdMortgage": {
+          "type": "boolean",
+          "title": "Leasehold Mortgage"
+        },
+        "enableCannabis": {
+          "type": "boolean",
+          "title": "Cannabis Loan"
+        },
+        "enableAffiliate": {
+          "type": "boolean",
+          "title": "Affiliate Loan"
+        },
+        "enableLockbox": {
+          "type": "boolean",
+          "title": "Rental Income Lockbox"
+        },
+        "enableUCC": {
+          "type": "boolean",
+          "title": "Security and UCC Documents (Ownership Pledge Agreement, Collateral Security Agreement, and Fixture Filing)"
+        },
+        "enableMERS": {
+          "type": "boolean",
+          "title": "MERS Loan"
+        },
+        "enableTranslator": {
+          "type": "boolean",
+          "title": "Translator Required"
+        },
+        "enableGrantors": {
+          "type": "boolean",
+          "title": "Third Party Security Instrument"
+        },
+        "enableSPE": {
+          "type": "boolean",
+          "title": "Special Purpose Entity"
+        },
+        "enableNoFill": {
+          "type": "boolean",
+          "title": "No-fill Certification of Non-Owner Occupancy and Business Purpose of Loan Certification"
+        },
+        "enableRemoveArbitration": {
+          "type": "boolean",
+          "title": "Remove Arbitration Provisions"
+        },
+        "enableRemoveLanguageCapacity": {
+          "type": "boolean",
+          "title": "Remove Language Capacity Declaration"
+        },
+        "enableRemoveInitials": {
+          "type": "boolean",
+          "title": "Remove initial lines from document footers"
+        },
+        "enableDSCR": {
+          "type": "boolean",
+          "title": "Include a Debt Service Coverage Ratio Requirement and Event of Default"
+        },
+        "enableCompletionGuaranty": {
+          "type": "boolean",
+          "title": "Include Third Party Construction Completion Guaranty"
+        },
+        "enableW9": {
+          "type": "boolean",
+          "title": "Include W-9"
+        },
+        "enableScheduleOfProperties": {
+          "type": "boolean",
+          "title": "Use Schedule of Properties?"
+        },
+        "enableSignerWarning": {
+          "type": "boolean",
+          "title": "Include Coverpage for Documents that Require Initials or Completion"
+        },
+        "enableRemoveCertificates": {
+          "type": "boolean",
+          "title": "Remove All Entity Certificates"
+        },
+        "enableRemoveTitlePolicy": {
+          "type": "boolean",
+          "title": "Remove Title Insurance Policy"
+        },
+        "enableFirstPaymentLetter": {
+          "type": "boolean",
+          "title": "Include First Payment Letter"
+        },
+        "enableDeferredOriginationFees": {
+          "type": "boolean",
+          "title": "Deferred Origination Fees"
+        },
+        "enableComplexSigners": {
+          "type": "boolean",
+          "title": "Use sophisticated signatures"
+        },
+        "enableThirdPartyAffiliate": {
+          "type": "boolean",
+          "title": "Third Party Affiliate"
+        },
+        "enableReviewChecklistDoc": {
+          "type": "boolean",
+          "title": "Include a 'Review Checklist' document in the document stack?"
+        },
+        "enableBorrowerCertification": {
+          "type": "boolean",
+          "title": "Borrower Certification Document"
+        },
+        "enableLegalDescription": {
+          "type": "boolean",
+          "title": "Use Legal Description"
+        },
+        "enableAutoExtension": {
+          "type": "boolean",
+          "title": "Automatic Extension?"
+        },
+        "enableCollateralAssignment": {
+          "type": "boolean",
+          "title": "Collateral Assignment?"
+        },
+        "enableIntercreditorAgreement": {
+          "type": "boolean",
+          "title": "Loan Subordination Agreement / Intercreditor Agreement"
+        },
+		    "enableInterestCalcType": {
+		      "type": "boolean",
+		      "title": "Interest Calculation Type"
+		    }
+      }
+    },
+    "borrowerInformation": {
+      "type": "object",
+      "title": "Borrower Information",
+      "properties": {
+        "noticeTo": {
+          "type": "string",
+          "title": "Borrower notice sent to",
+          "enum": [
+            "Borrower",
+            "Other"
+          ]
+        },
+        "deliveryTo": {
+          "type": "string",
+          "title": "Borrower delivery to",
+          "description": "Person who will take delivery on Borrower's behalf ('Attn'). Only needed when borrowerInformation.noticeTo == 'Other'."
+        },
+        "address": {
+          "$ref": "#/definitions/address"
+        },
+        "isAnyBorrowerIRA": {
+          "type": "boolean",
+          "title": "Is any Borrower an IRA or 401k?",
+          "description": "CLIENT SPECIFIC"
+        },
+        "borrowers": {
+          "type": "array",
+          "title": "Information for each Borrower",
+          "items": {
+            "$ref": "#/definitions/grantors"
+          }
+        }
+      }
+    },
+    "nonBorrowerOwners": {
+      "type": "array",
+      "title": "Non-Borrower Property Owners",
+      "description": "The Non-Borrower Property Owners are parties who have an ownership interest in property to be pledged but who are not Borrowers on the loan. Use of this schema should be combined with enableFeatures.enableGrantors == true",
+      "items": {
+        "$ref": "#/definitions/grantors"
+      }
+    },
+    "guarantorInformation": {
+      "type": "object",
+      "title": "Guarantor Information",
+      "properties": {
+        "isGuaranty": {
+          "type": "boolean",
+          "title": "Is there a Guaranty?",
+          "description": "This must be true to produce guaranties."
+        },
+        "guarantors": {
+          "type": "array",
+          "title": "Information for each Guarantor",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Guarantor Full Name"
+              },
+              "entityType": {
+                "type": "string",
+                "title": "Type of Entity",
+                "$ref": "#/definitions/entityTypes"
+              },
+              "formationState": {
+                "type": "string",
+                "title": "State of Formation",
+                "description": "The state of formation for certain kinds of entities. Only needed if entityType != 'individual' && entityType != 'trust'",
+                "$ref": "#/definitions/states"
+              },
+              "isPowerOfAttorney": {
+                "type": "boolean",
+                "title": "Is Guarantor using a Power of Attorney to Sign?",
+                "description": "Only needed if entityType == 'individual'"
+              },
+              "AttorneyInFact": {
+                "type": "string",
+                "title": "Attorney-in-Fact",
+                "description": "Only needed if entityType == 'individual' && isPowerOfAttorney == true"
+              },
+              "isTranslator": {
+                "type": "boolean",
+                "title": "Does this Guarantor require a translator",
+                "description": "Only needed if entityType == 'individual'"
+              },
+              "guarantorType": {
+                "type": "string",
+                "title": "Type of guarantor",
+                "enum": [
+                  "Full",
+                  "Limited",
+                  "Springing"
+                ]
+              },
+              "spousalSignature": {
+                "type": "boolean",
+                "title": "If Guarantor is married, does Guarantor or Guarantor’s spouse reside in Alaska, Arizona, Idaho, Louisiana, Nevada, New Mexico, Texas, Washington, or Wisconsin?",
+                "description": "Only needed if entityType == 'individual'. Note that some users choose to expand the list of states. The Default is 'true' if the guarantor is an individual."
+              },
+              "addressType": {
+                "type": "string",
+                "title": "Use which address for Guarantor?",
+                "enum": [
+                  "Borrower",
+                  "Property",
+                  "Other"
+                ]
+              },
+              "address": {
+                "description": "Only needed if addressType == 'Other'",
+                "$ref": "#/definitions/address"
+              },
+              "complexSigners": {
+                "type": "array",
+                "title": "Signers for Guarantor (complex)",
+                "description": "A more complex interface for sending signer information for an entity. Only relevant if enableFeatures.enableComplexSigners == true. To use this, 'usesComplexSigners': true should also be sent as a property of each Guarantor. Should be used in combination with complexOwners.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "title": "Name"
+                    },
+                    "signerTitle": {
+                      "type": "string",
+                      "title": "Title"
+                    },
+                    "entityType": {
+                      "type": "string",
+                      "title": "Entity type",
+                      "$ref": "#/definitions/entityTypes"
+                    },
+                    "formationState": {
+                      "type": "string",
+                      "title": "Organization state",
+                      "description": "The state of formation for certain kinds of entities. Only needed if entityType != 'individual' && entityType != 'trust'",
+                      "$ref": "#/definitions/states"
+                    },
+                    "isTranslator": {
+                      "type": "boolean",
+                      "title": "Translator Required?"
+                    },
+                    "signers": {
+                      "type": "array",
+                      "title": "Signers for Signers for Guarantor",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "title": "Name"
+                          },
+                          "signerTitle": {
+                            "type": "string",
+                            "title": "Title"
+                          },
+                          "entityType": {
+                            "type": "string",
+                            "title": "Entity type",
+                            "$ref": "#/definitions/entityTypes"
+                          },
+                          "formationState": {
+                            "type": "string",
+                            "title": "Organization state",
+                            "description": "The state of formation for certain kinds of entities. Only needed if entityType != 'individual' && entityType != 'trust'",
+                            "$ref": "#/definitions/states"
+                          },
+                          "isTranslator": {
+                            "type": "boolean",
+                            "title": "Translator Required?"
+                          },
+                          "signers": {
+                            "type": "array",
+                            "title": "Signers for Signers for Signers for Guarantor",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "title": "Name"
+                                },
+                                "signerTitle": {
+                                  "type": "string",
+                                  "title": "Title"
+                                },
+                                "isTranslator": {
+                                  "type": "boolean",
+                                  "title": "Translator Required?"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "lenderInformation": {
+      "type": "object",
+      "title": "Lender Information",
+      "properties": {
+        "isExhibitA": {
+          "type": "boolean",
+          "title": "Lender's named in Exhibit A?",
+          "description": "If this is true, no additional information is needed about the Lender(s) within this section EXCEPT for the properties that begin 'notice'."
+        },
+        "isMultipleLenders": {
+          "type": "boolean",
+          "title": "Are there multiple lenders?",
+          "description": "If this is true, the 'name' and 'cflNumber' properties below can be ignored. Instead, such information is entered into the same properties within the 'lenders' array. NOT needed if isExhibitA == true."
+        },
+        "name": {
+          "type": "string",
+          "title": "Enter Lender Name",
+          "description": "NOT needed if isExhibitA == true || isMultipleLenders == true."
+        },
+        "entityType": {
+          "type": "string",
+          "title": "Entity type",
+          "$ref": "#/definitions/entityTypes",
+          "description": "NOT needed if isExhibitA == true || isMultipleLenders == true."
+        },
+        "formationState": {
+          "type": "string",
+          "title": "Organization state",
+          "$ref": "#/definitions/states",
+          "description": "The state of formation for certain kinds of entities. Only needed if entityType != 'individual' && entityType != 'trust'. NOT needed if isExhibitA == true || isMultipleLenders == true."
+        },
+        "isCFLNumber": {
+          "type": "boolean",
+          "title": "Do any of the Lenders have a California CFL License?"
+        },
+        "cflNumber": {
+          "type": "string",
+          "title": "Is the Lender a California lender with a CFL License number",
+          "description": "Only needed if isCFLNumber == true."
+        },
+        "noticeTo": {
+          "type": "string",
+          "title": "Will notice be sent to the Lender or a Third Party on behalf of the Lender?",
+          "enum": [
+            "Lender",
+            "Third Party"
+          ]
+        },
+        "noticeRecipient": {
+          "type": "string",
+          "title": "Name of Recipient"
+        },
+        "address": {
+          "$ref": "#/definitions/address"
+        },
+        "noticeEmail": {
+          "type": "string",
+          "title": "Notice email",
+          "description": "CLIENT SPECIFIC"
+        },
+        "noticePhone": {
+          "type": "string",
+          "title": "Lender Phone",
+          "description": "CLIENT SPECIFIC"
+        },
+        "lenders": {
+          "type": "array",
+          "title": "Enter lenders",
+          "description": "Not used if isExhibitA == true. Only needed if isMultipleLenders == true.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "entityType": {
+                "type": "string",
+                "title": "Entity type",
+                "$ref": "#/definitions/entityTypes"
+              },
+              "formationState": {
+                "type": "string",
+                "title": "Organization state",
+                "description": "The state of formation for certain kinds of entities. Only needed if entityType != 'individual' && entityType != 'trust'",
+                "$ref": "#/definitions/states"
+              },
+              "cflNumber": {
+                "type": "string",
+                "title": "CFL License Number (if any)",
+                "description": "Optional, but only used if lenderInformation.isCFLNumber == true."
+              },
+              "amount": {
+                "type": "number",
+                "title": "Amount",
+                "description": "This is the amount of each Lender's contribution to the total loan amount. The sum of all Lenders' contributions becomes the loan amount when there are multiple lenders, in which case loan.amount is therefore ignored."
+              }
+            }
+          }
+        }
+      }
+    },
+    "isACH": {
+      "type": "boolean",
+      "title": "Include ACH Delivery of Payments?"
+    },
+    "isRemoveACH": {
+      "type": "boolean",
+      "title": "Remove the standard ACH from the document set? (This will remove the ACH itself, but all references to it will remain.)",
+      "description": "Only used if isRemoveACH == true."
+    },
+    "servicerInformation": {
+      "type": "object",
+      "title": "Loan Servicer Information",
+      "properties": {
+        "servicer": {
+          "type": "string",
+          "title": "Loan Servicer On This Transaction",
+          "enum": [
+            "Lender",
+            "BSI",
+            "Citrus Servicing LLC",
+            "CJ Investment Services",
+            "Del Toro",
+            "Fay Servicing, LLC",
+            "FCI",
+            "MRK",
+            "Note Servicing Center",
+            "PLM",
+            "Selene",
+            "Shellpoint Mortgage Servicing",
+            "Select Portfolio Servicing",
+            "Statebridge",
+            "Superior Loan Servicing",
+            "Other"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Only needed if servicer == 'Other'."
+        },
+        "address": {
+          "description": "Only needed if servicer == 'Other'.",
+          "$ref": "#/definitions/address"
+        }
+      }
+    },
+    "isBroker": {
+      "type": "boolean",
+      "title": "Is a Broker used on this transaction?"
+    },
+    "brokerInformation": {
+      "type": "object",
+      "title": "Broker Information",
+      "description": "Only needed if isBroker == true.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Broker Name"
+        },
+        "license": {
+          "type": "string",
+          "title": "Broker License Number"
+        },
+        "address": {
+          "$ref": "#/definitions/address"
+        }
+      }
+    },
+    "titleInformation": {
+      "type": "object",
+      "title": "Title Information",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Title Company Name"
+        },
+        "contact": {
+          "type": "string",
+          "title": "Title Officer Contact Name"
+        },
+        "email": {
+          "type": "string",
+          "title": "Title Officer Contact Email"
+        },
+        "address": {
+          "description": "Optional",
+          "$ref": "#/definitions/address"
+        },
+        "orderNumber": {
+          "type": "string",
+          "title": "Title Order Number"
+        },
+        "reportDate": {
+          "type": "string",
+          "format": "date",
+          "title": "Title Report Effective Date"
+        },
+        "isSingleTitleReport": {
+          "type": "boolean",
+          "title": "All Properties on Single Title Report?",
+          "description": "CLIENT SPECIFIC"
+        },
+        "altaVersion": {
+          "type": "string",
+          "title": "Select version of ALTA policy",
+          "enum": [
+            "2006",
+            "2021"
+          ],
+          "description": "CLIENT SPECIFIC"
+        },
+        "isReduceCoverage": {
+          "type": "boolean",
+          "title": "Reduce Title Insurance Coverage Amount from 125% to 100% of Loan Amount? (125% if 'No')"
+        },
+        "isProforma": {
+          "type": "boolean",
+          "title": "Attach Proforma Policy Exhibit?"
+        },
+        "exceptionItems": {
+          "type": "string",
+          "title": "Exception Items to be deleted by title"
+        },
+        "altaEndorsements": {
+          "type": "string",
+          "title": "Additional ALTA Endorsements Requested by Lender"
+        }
+      }
+    },
+    "isEscrow": {
+      "type": "boolean",
+      "title": "Include separate Escrow/Settlement Agent Information?"
+    },
+    "escrowInformation": {
+      "type": "object",
+      "title": "Escrow Company Information",
+      "description": "Only needed if isEscrow == true.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Escrow Company Name"
+        },
+        "contact": {
+          "type": "string",
+          "title": "Escrow Officer Contact Name"
+        },
+        "email": {
+          "type": "string",
+          "title": "Escrow Officer Contact Email"
+        },
+        "address": {
+          "description": "Optional",
+          "$ref": "#/definitions/address"
+        }
+      }
+    },
+    "preparerInformation": {
+      "type": "object",
+      "title": "Preparer Information",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name"
+        },
+        "email": {
+          "type": "string",
+          "title": "Email Address"
+        },
+        "addressType": {
+          "type": "string",
+          "title": "Address of Preparer",
+          "enum": [
+            "Lender",
+            "Broker",
+            "Other"
+          ]
+        },
+        "address": {
+          "description": "Only needed if addressType == 'Other'",
+          "$ref": "#/definitions/address"
+        }
+      }
+    },
+    "closingContact": {
+      "type": "object",
+      "title": "Closing Contact",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name"
+        },
+        "email": {
+          "type": "string",
+          "title": "Email Address"
+        }
+      }
+    },
+    "collateral": {
+      "type": "object",
+      "title": "Property Information",
+      "properties": {
+        "isScheduleOfProperties": {
+          "type": "boolean",
+          "title": "Use Schedule of Properties?",
+          "description": "Use of this property should be combined with enableFeatures.enableScheduleOfProperties == true"
+        },
+        "isPartialRelease": {
+          "type": "boolean",
+          "title": "Allow for partial release of collateral?"
+        },
+        "partialRelease": {
+          "type": "string",
+          "title": "Partial Release of Collateral",
+          "enum": [
+            "Release Price",
+            "Net Proceeds"
+          ],
+          "description": "Only needed if isPartialRelease == true"
+        },
+        "legalDescription": {
+          "type": "string",
+          "title": "Legal Description",
+          "description": "Use of this property should be combined with enableFeatures.enableLegalDescription == true"
+        },
+        "governingLawState": {
+          "type": "string",
+          "title": "Governing Law State",
+          "$ref": "#/definitions/states"
+        },
+        "noteCounty": {
+          "type": "string",
+          "title": "Note County (County for Arbitration)"
+        },
+        "isConfessionOfJudgment": {
+          "type": "boolean",
+          "title": "Include Confession of Judgment Provisions?",
+          "description": "CLIENT SPECIFIC"
+        },
+        "isFixtureFiling": {
+          "type": "boolean",
+          "title": "Include Fixture Filing with each Security Instrument?"
+        },
+        "collateralProperties": {
+          "type": "array",
+          "title": "Properties",
+          "items": {
+            "type": "object",
+            "properties": {
+              "address": {
+                "$ref": "#/definitions/address"
+              },
+              "county": {
+                "type": "string",
+                "title": "County"
+              },
+              "propertyID": {
+                "type": "string",
+                "title": "Property Tax ID Number (APN)",
+                "description": "The Property Tax ID Number for the collateral property (also called the 'APN'). This is REQUIRED for each property submitted, even if the user intends to send partial data and complete the remainder of the form by hand."
+              },
+              "lienPosition": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10,
+                "title": "Lien Position",
+                "description": "This property is converted to a string within the interview, but the API requires it to be sent as an integer, then converts it to a string."
+              },
+              "propertyType": {
+                "type": "string",
+                "title": "Property Type",
+                "enum": [
+                  "Residential",
+                  "Multi-Family",
+                  "Commercial",
+                  "Vacant"
+                ],
+                "description": "Only needed if the collateral property is in the state of Maryland, New York, Oregon, Pennsylvania, or Kentucky. (Some users have client-specific provisions that require it regardless of property state.) The 'Residential' option selects '1-6 Single Family Resident' in New York, and '1-4 Single Family Residence' in every other state. The 'Multi-Family' option selects '7+ Multi-Family Property' in New York, and '5+ Multi-Family Property' in every other state."
+              },
+              "rentalProperty": {
+                "type": "string",
+                "title": "Is this a residential rental property?",
+                "enum": [
+                  "Yes",
+                  "No"
+                ],
+                "description": "Only needed if state == 'Utah' While this property looks like it should be a boolean, it is set up as a string to prevent the system from automatically concluding that the collateral property IS NOT a rental property when no answer is provided. That would cause incorrect information to be entered into the security instrument."
+              },
+              "isLeaseholdMortgage": {
+                "type": "boolean",
+                "title": "Leasehold mortgage"
+              },
+              "leaseholdLessor": {
+                "type": "string",
+                "title": "List Parties Defined as Ground Lessor",
+                "description": "Finishes the definition ''Ground Lessor' means ____________, its successors and/or assigns.'"
+              },
+              "isHomestead": {
+                "type": "boolean",
+                "title": "Is the Property the Borrower's primary residence?"
+              },
+              "usesScheduleOfProperties": {
+                "type": "boolean",
+                "title": "Uses Schedule of Properties",
+                "description": "This property is ignored by the interpreter. It can optionally be sent as 'true' to prompt validation functions using the final validation schema to check that the correct information was sent for each collateral property. (Less information is needed for each repetition of 'collateralProperties' when usesScheduleOfProperties == true)"
+              },
+              "releasePrice": {
+                "type": "number",
+                "title": "Minimum Release Price",
+                "description": "Only needed if collateral.partialRelease == 'Release Price'"
+              },
+              "isIncludePUD": {
+                "type": "boolean",
+                "title": "Include PUD/Condo Provisions?",
+                "description": "CLIENT SPECIFIC"
+              },
+              "isPurchaseMoney": {
+                "type": "boolean",
+                "title": "Is this a purchase money loan?",
+                "description": "CLIENT SPECIFIC"
+              },
+              "trustee": {
+                "type": "string",
+                "title": "Choose Trustee of the Deed of Trust",
+                "description": "When using the API, the 'Trustee Name' dropdown on the Lightning Docs 'Property Information' form is always set to 'Other.' The name you give here answers the attendant text field. Only needed when the collateral property is in one of the following states: Arizona, Alaska, California, Colorado, District of Columbia, Idaho, Maryland, Mississippi, Missouri, Montana, Nebraska, North Carolina, Nevada, Oregon, Tennessee, Texas, Utah, Virginia, Washington and West Virginia."
+              },
+              "trusteeName": {
+                "type": "string",
+                "title": "Trustee Name",
+                "description": "Only needed when 'Other' was selected for trustee."
+              },
+              "trusteeAddress": {
+                "type": "string",
+                "title": "Trustee Address",
+                "description": "Trustee's Street, City, State, and Zip. Only needed when 'Other' was selected for trustee and the collateral property is in one of the following states: Arizona, Mississippi, Tennessee, Texas, Virginia, and West Virginia."
+              },
+              "trusteeCounty": {
+                "type": "string",
+                "title": "Trustee County",
+                "description": "Only needed when the collateral property is in Tennessee."
+              },
+              "owners": {
+                "type": "array",
+                "title": "Owners",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "owner": {
+                      "type": "string",
+                      "title": "Owner Name",
+                      "description": "The owner's name exactly as it appears in the borrowers (or nonBorrowerOwners) array. No two borrowers should have the same name."
+                    },
+                    "vesting": {
+                      "type": "string",
+                      "title": "Vested As",
+                      "description": "How the owner is vested, eg, 'a single man' or 'a married woman as her sole and separate property'. See lightningdocs for other examples, but the text can be anything; it need not be among the options given in lightningdocs. IMPORTANT: answer 'married' (without the quotes) for the FIRST of two married individuals vested together, then give the actual vesting for the second of the two. This will combine them together for vesting."
+                    }
+                  }
+                }
+              },
+              "seniorLiens": {
+                "type": "array",
+                "title": "Request for Notice of Default of Senior Liens",
+                "description": "Information about senior liens used in the security instrument's Request for Notice of Default of Senior Lien. Only needed if lienPosition > 1 && (state == 'California' || state == 'Nebraska')",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "lenderName": {
+                      "type": "string",
+                      "title": "Senior Lender Name"
+                    },
+                    "recordingDate": {
+                      "type": "string",
+                      "format": "date",
+                      "title": "Recording Date"
+                    },
+                    "instrumentNumber": {
+                      "type": "string",
+                      "title": "Loan Instrument No."
+                    },
+                    "trustor": {
+                      "type": "string",
+                      "title": "Senior Trustor"
+                    },
+                    "trustee": {
+                      "type": "string",
+                      "title": "Senior Trustee"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "product": {
+      "type": "string",
+      "title": "Loan Type",
+      "description": "Optional. Some users have client-specific language in the documents that varies depending on the type of loan (e.g., 'Bridge' or 'Rental'). That loan type or product name can be submitted to this property. While users filling the online form would see a dropdown list of choices to select from, those choices vary from user to user so they cannot be provided here."
+    },
+    "isProxy": {
+      "type": "boolean",
+      "title": "Do you want to build the loan documents using another company's customizations?",
+      "description": "CLIENT SPECIFIC. Optional. Under some circumstances, some users choose to have a transaction assemble using the special customizations of a different Lightning Docs user."
+    },
+    "proxyUser": {
+      "type": "string",
+      "title": "Select a company",
+      "description": "Needed if isProxy == true. Allows you to identify the specific company whose customizations will be used for this transaction. The options are specific to each Lightning Docs user, so they cannot be given here."
+    },
+    "clientName": {
+      "type": "string",
+      "title": "Client Name",
+      "description": "THIS IS ONLY USED IN API INTEGRATION DEVELOPMENT AND TESTING. Allows you to replicate client-specific conditions outside that client's Lightning Docs catalog. Contact Lightning Docs if you need to know which name to use to simulate a particular client."
+    },
+    "loan": {
+      "title": "Standard Loan Terms",
+      "type": "object",
+      "properties": {
+        "loanNumber": {
+          "type": "string",
+          "title": "Loan Number"
+        },
+        "closingDate": {
+          "type": "string",
+          "format": "date",
+          "title": "Closing Date"
+        },
+        "term": {
+          "type": "number",
+          "title": "Loan Term"
+        },
+        "usesMultipleLenders": {
+          "type": "boolean",
+          "title": "Uses Schedule of Properties",
+          "description": "This property is ignored by the interpreter. It can optionally be sent as 'true' to prompt validation functions using the final validation schema to check whether 'amount' (below) needs to be required. This should be sent as true whenever lenderInformation.isMultipleLenders == true."
+        },
+        "amount": {
+          "type": "number",
+          "title": "Loan Amount"
+        },
+        "amortization": {
+          "type": "number",
+          "title": "Amortization Period (in months)",
+          "description": "Should be 0 (zero) when isInterestOnly == true && ( ioPeriod == term )."
+        },
+        "rate": {
+          "type": "number",
+          "title": "Interest Rate %"
+        },
+        "defaultRate": {
+          "type": "number",
+          "title": "Default interest rate"
+        },
+        "calculation": {
+          "type": "string",
+          "title": "Interest Calculation Type",
+          "enum": [
+            "30/360",
+            "360/Actual",
+            "365/Actual"
+          ],
+          "default": "30/360"
+        },
+        "isInterestOnly": {
+          "type": "boolean",
+          "title": "Is there an interest-only period?"
+        },
+        "ioPeriod": {
+          "type": "number",
+          "title": "Interest-Only Period (in months)",
+          "description": "Only needed if isInterestOnly == true."
+        },
+        "isVariable": {
+          "type": "boolean",
+          "title": "Variable Rate?",
+          "description": "Should not be used with isInterestStep."
+        },
+        "variableInformation": {
+          "type": "object",
+          "title": "Variable Rate Information",
+          "description": "Only needed if isVariable == true",
+          "properties": {
+            "variableMargin": {
+              "type": "number",
+              "title": "Margin Percent"
+            },
+            "isDailyRate": {
+              "type": "boolean",
+              "title": "Use a Daily Floating Rate?"
+            },
+            "variableFirstChange": {
+              "type": "number",
+              "title": "Number of Months before First Payment Change Date"
+            },
+            "variableFirstCap": {
+              "type": "number",
+              "title": "First Interest Cap Percent",
+              "description": "Optional. Only used if isDailyRate == false."
+            },
+            "variableSubsequentChange": {
+              "type": "number",
+              "title": "Number of Months between Change Dates after First Payment Change Date",
+              "description": "Only needed if isDailyRate == false."
+            },
+            "variableSubsequentCap": {
+              "type": "number",
+              "title": "Subsequent Interest Cap Percentage",
+              "description": "Optional. Only used if isDailyRate == false."
+            },
+            "variableFloor": {
+              "type": "number",
+              "title": "Floor Rate Percent",
+              "description": "Optional."
+            },
+            "variableCeiling": {
+              "type": "number",
+              "title": "Maximum Interest Percent Over Floor Rate",
+              "description": "Optional."
+            },
+            "index": {
+              "type": "string",
+              "title": "Variable Interest Rate Index",
+              "enum": [
+                "Wall Street Journal Prime",
+                "Treasury",
+                "Federal 60",
+                "Federal 84",
+                "Federal 120",
+                "30 Day Average SOFR",
+                "SOFR",
+                "One-Month CME Term SOFR",
+                "12-Month Term SOFR"
+              ]
+            }
+          }
+        },
+        "isInterestStep": {
+          "type": "boolean",
+          "title": "Interest Rate Step",
+          "description": "Should not be used with isVariable."
+        },
+        "stepInformation": {
+          "type": "array",
+          "title": "Interest Rate Steps",
+          "description": "Only needed if isInterestStep == true.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rate": {
+                "type": "number",
+                "title": "Interest Rate (%)"
+              },
+              "duration": {
+                "type": "number",
+                "title": "Duration (months)"
+              }
+            }
+          }
+        },
+        "isMERS": {
+          "type": "boolean",
+          "title": "MERS Loan?"
+        },
+        "mersNumber": {
+          "type": "string",
+          "title": "MERS Number",
+          "description": "Only needed if isMERS == true."
+        },
+        "firstPaymentDate": {
+          "type": "string",
+          "format": "date",
+          "title": "First Payment Date",
+          "description": "Optional. Used to override the automatic calculation of the First Payment Date."
+        },
+        "maturityDate": {
+          "type": "string",
+          "format": "date",
+          "title": "Maturity Date",
+          "description": "Optional. Used to override the automatic calculation of the Maturity Date."
+        },
+        "isAdvancePayment": {
+          "type": "boolean",
+          "title": "Payment in Advance (not in arrears)?"
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "isCreditLine": {
+          "type": "boolean",
+          "title": "Is this a line of credit?"
+        },
+        "creditLineInformation": {
+          "type": "object",
+          "title": "Line of Credit Questions",
+          "description": "Only needed if isCreditLine == true.",
+          "properties": {
+            "isRevolving": {
+              "type": "boolean",
+              "title": "Can the borrower pay down principal and reborrow funds (i.e. revolving)?"
+            },
+            "minimumAdvance": {
+              "type": "number",
+              "title": "Amount of Minimum Advance Request"
+            },
+            "requestFee": {
+              "type": "number",
+              "title": "Advance Request Fee"
+            },
+            "maxDraws": {
+              "type": "number",
+              "title": "Maximum Number of Draws per Month"
+            },
+            "minimumBalance": {
+              "type": "number",
+              "title": "Minimum Outstanding Principal Balance",
+              "description": "CLIENT SPECIFIC"
+            }
+          }
+        },
+        "prepaymentPremium": {
+          "type": "string",
+          "title": "Select Prepayment Penalty",
+          "enum": [
+            "Guaranteed Interest",
+            "Linear Step",
+            "Lockout",
+            "Non Linear Step",
+            "Yield Maintenance",
+            "90-Day Step",
+            "Minimum Interest",
+            "None"
+          ],
+          "description": "Optional; sending no answer is functionally equivalent to answering 'None'. Answers 'Yield Maintenance', '90-Day Step', and 'Minimum Interest' are only available to some users."
+        },
+        "prepaymentTerm0": {
+          "type": "number",
+          "title": "Months of Guaranteed Interest",
+          "description": "Only needed if prepaymentPremium == 'Guaranteed Interest'."
+        },
+        "prepaymentTerm1": {
+          "type": "number",
+          "title": "Prepay Step Years",
+          "description": "Only needed if prepaymentPremium == 'Linear Step'."
+        },
+        "prepaymentTerm2": {
+          "type": "number",
+          "title": "Lockout Period (in months)",
+          "description": "Only needed if prepaymentPremium == 'Lockout'."
+        },
+        "prepaymentLockoutCalculation": {
+          "type": "string",
+          "title": "Penalty is Calculated From",
+          "enum": [
+            "Dollar Amount",
+            "Months",
+            "Prepaid"
+          ],
+          "description": "Only needed if prepaymentPremium == 'Lockout'."
+        },
+        "prepaymentLockoutAmount": {
+          "type": "number",
+          "title": "Penalty Dollar Amount",
+          "description": "Only needed if prepaymentPremium == 'Lockout' && prepaymentLockoutCalculation == 'Dollar Amount'"
+        },
+        "prepaymentLockoutMonths": {
+          "type": "number",
+          "title": "Months",
+          "description": "Only needed if prepaymentPremium == 'Lockout' && prepaymentLockoutCalculation == 'Months'"
+        },
+        "prepaymentLockoutPrepaid": {
+          "type": "number",
+          "title": "Percentage of Amount Prepaid (%)",
+          "description": "Only needed if prepaymentPremium == 'Lockout' && prepaymentLockoutCalculation == 'Prepaid'"
+        },
+        "isPrepaymentLockoutInterest": {
+          "type": "boolean",
+          "title": "Borrower has to pay interest through penalty period in addition to penalty?",
+          "description": "Only needed if prepaymentPremium == 'Lockout'"
+        },
+        "prepaymentTerm3": {
+          "type": "number",
+          "title": "Number of Years",
+          "description": "Only needed if prepaymentPremium == 'Non Linear Step'."
+        },
+        "prepaymentSteps": {
+          "type": "array",
+          "title": "Penalty Percentage (%)",
+          "description": "Only needed if prepaymentPremium == 'Non Linear Step'.",
+          "items": {
+            "type": "number"
+          }
+        },
+        "prepaymentTerm4": {
+          "type": "number",
+          "title": "Term (in months)",
+          "description": "Only needed if prepaymentPremium == 'Yield Maintenance'."
+        },
+        "isPrepaymentMinimumPayment": {
+          "type": "boolean",
+          "title": "Can borrower pay 20% in a year without triggering prepayment penalty?",
+          "description": "Only needed if prepaymentPremium is 'Guaranteed Interest', 'Linear Step', 'Lockout', or 'Non Linear Step'."
+        },
+        "prepaymentMinimumInterest": {
+          "type": "number",
+          "title": "Minimum Interest Amount",
+          "description": "Only needed if prepaymentPremium == 'Minimum Interest'."
+        },
+        "isBridgeToPerm": {
+          "type": "boolean",
+          "title": "Bridge to Perm Loan?",
+          "description": "Must be used in combination with loan.isInterestOnly == true."
+        },
+        "bridgeToPerm": {
+          "type": "object",
+          "title": "Bridge to Perm",
+          "description": "Only needed if bridgeToPerm == true.",
+          "properties": {
+            "conversionFee": {
+              "type": "number",
+              "title": "Conversion Fee ($)"
+            },
+            "maximumAdvance": {
+              "type": "number",
+              "title": "Maximum Total Advance (%)"
+            }
+          }
+        },
+        "isConstruction": {
+          "type": "boolean",
+          "title": "Is Lender reserving Construction Funds?"
+        },
+        "construction": {
+          "type": "object",
+          "title": "Construction",
+          "description": "Only needed if isConstruction == true.",
+          "properties": {
+            "constructionType": {
+              "type": "string",
+              "title": "Type of Construction Reserve Language to be used",
+              "enum": [
+                "Simple",
+                "Standard",
+                "Extensive"
+              ]
+            },
+            "reserveAmount": {
+              "type": "number",
+              "title": "Amount Reserved From Loan Proceeds"
+            },
+            "isNonDutch": {
+              "type": "boolean",
+              "title": "Does interest accrue on reserved construction funds only when they are advanced to the borrower? (non-dutch interest)",
+              "description": "Only used if constructionType != 'Simple'."
+            },
+            "isExcludeSchedule": {
+              "type": "boolean",
+              "title": "Exclude Disbursement Schedule",
+              "description": "Only used if constructionType != 'Simple'."
+            },
+            "isRetainage": {
+              "type": "boolean",
+              "title": "Retainage Required",
+              "description": "Only used if constructionType != 'Simple'."
+            },
+            "isFundsControlAgent": {
+              "type": "boolean",
+              "title": "Will Lender use a third-party Funds Control Agent?",
+              "description": "Only used if constructionType != 'Simple'."
+            },
+            "isAssignmentOfPermits": {
+              "type": "boolean",
+              "title": "Include a Separate Recordable Assignment of Permits and Agreements?",
+              "description": "Only used if constructionType != 'Simple'."
+            },
+            "isConstructionContract": {
+              "type": "boolean",
+              "title": "Is there a Construction Contract?",
+              "description": "Only used if constructionType != 'Simple'."
+            },
+            "constructionContract": {
+              "type": "object",
+              "title": "Construction Contract Information",
+              "description": "Only needed if isConstructionContract == true.",
+              "properties": {
+                "contractor": {
+                  "type": "string",
+                  "title": "Contractor"
+                },
+                "address": {
+                  "title": "Contractor Street Address for Notice",
+                  "$ref": "#/definitions/address"
+                }
+              }
+            },
+            "isCompletionSchedule": {
+              "type": "boolean",
+              "title": "Insert a Construction Completion Schedule?",
+              "description": "Only used if constructionType != 'Simple'."
+            },
+            "completion": {
+              "type": "array",
+              "title": "Completion Deadlines",
+              "description": "Only used if isCompletionSchedule == true",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "percentCompletion": {
+                    "type": "number",
+                    "title": "Percent of Completion"
+                  },
+                  "deadline": {
+                    "type": "number",
+                    "title": "Deadline (in days)"
+                  }
+                }
+              }
+            },
+            "isDesignContract": {
+              "type": "boolean",
+              "title": "Is there a Design Contract?",
+              "description": "Only used if constructionType != 'Simple'."
+            },
+            "designContract": {
+              "type": "object",
+              "title": "Design Contract Information",
+              "description": "Only needed if isDesignContract == true.",
+              "properties": {
+                "designProfessional": {
+                  "type": "string",
+                  "title": "Design Professional"
+                },
+                "address": {
+                  "title": "Designer Street Address for Notice",
+                  "$ref": "#/definitions/address"
+                }
+              }
+            }
+          }
+        },
+        "isExtension": {
+          "type": "boolean",
+          "title": "Conditional Right to Extension"
+        },
+        "extension": {
+          "type": "object",
+          "title": "Extension Information",
+          "description": "Only used if isExtension == true.",
+          "properties": {
+            "extensions": {
+              "type": "number",
+              "title": "Number of Extensions"
+            },
+            "monthsPerExtension": {
+              "type": "number",
+              "title": "Number of Months for Each Extension"
+            },
+            "feeType": {
+              "type": "string",
+              "title": "Extension Fee Type",
+              "enum": [
+                "None",
+                "Percent",
+                "Dollar"
+              ]
+            },
+            "feeAmount": {
+              "type": "number",
+              "title": "Percent of Loan Balance/Amount of Extension Fee",
+              "description": "Only needed if feeType != 'None'."
+            }
+          }
+        },
+        "isAutoExtension": {
+          "type": "boolean",
+          "title": "Automatic Extension?",
+          "description": "CLIENT SPECIFIC. Only used if isExtension == false."
+        },
+        "isExitFee": {
+          "type": "boolean",
+          "title": "Exit Fee?"
+        },
+        "exitFee": {
+          "type": "number",
+          "title": "Amount",
+          "description": "Only used if isExitFee == true."
+        },
+        "isTerminationFee": {
+          "type": "boolean",
+          "title": "Termination Fee?"
+        },
+        "terminationFee": {
+          "type": "number",
+          "title": "Amount",
+          "description": "Only used if isTerminationFee == true."
+        },
+        "deferredBrokerFee": {
+          "type": "string",
+          "title": "Deferred Broker Fees?",
+          "enum": [
+            "None",
+            "Dollar",
+            "Percent"
+          ],
+          "description": "Optional; sending no answer is functionally equivalent to answering 'None'."
+        },
+        "deferredBrokerFeeAmount": {
+          "type": "number",
+          "title": "Amount/Percentage of Loan Amount",
+          "description": "Only used if deferredBrokerFee == 'Dollar Amount' || deferredBrokerFee == 'Percentage of Loan'."
+        },
+        "deferredOriginationFee": {
+          "type": "string",
+          "title": "Deferred Broker Fees?",
+          "enum": [
+            "None",
+            "Dollar",
+            "Percent"
+          ],
+          "description": "Optional; sending no answer is functionally equivalent to answering 'None'."
+        },
+        "deferredOriginationFeeAmount": {
+          "type": "number",
+          "title": "Amount/Percentage of Loan Amount",
+          "description": "Only used if deferredBrokerFee == 'Dollar Amount' || deferredBrokerFee == 'Percentage of Loan'."
+        },
+        "isBorrowerServicingFees": {
+          "type": "boolean",
+          "title": "Is Borrower Responsible for all Servicing Fees?"
+        },
+        "isDSCR": {
+          "type": "boolean",
+          "title": "Include a Debt Service Coverage Ratio Requirement and Event of Default?"
+        },
+        "ratio": {
+          "type": "number",
+          "title": "Ratio",
+          "description": "Only used if isDSCR == true."
+        },
+        "isCannabisLoan": {
+          "type": "boolean",
+          "title": "Cannabis Loan?"
+        },
+        "assignmentOfPermitsProperties": {
+          "type": "array",
+          "title": "Select the properties for Assignments of Permits",
+          "description": "Only needed if isCannabisLoan == true || construction.isAssignmentOfPermits == true. Give the Property ID (APN) of each collateral property for which you want an Assignment of Permits.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isSBA": {
+          "type": "boolean",
+          "title": "SBA Loan?"
+        },
+        "sbaDate": {
+          "type": "string",
+          "format": "date",
+          "title": "SBA Approval Date",
+          "description": "Only used if isSBA == true."
+        },
+        "sbaNumber": {
+          "type": "string",
+          "title": "SBA Loan Number",
+          "description": "Only used if isSBA == true."
+        },
+        "isSPE": {
+          "type": "boolean",
+          "title": "Special Purpose Entity?"
+        },
+        "isRecycledSPE": {
+          "type": "boolean",
+          "title": "Recyled SPE?",
+          "description": "Recycled SPE?"
+        },
+        "isAffiliateLoan": {
+          "type": "boolean",
+          "title": "Affiliate Loan"
+        },
+        "isLockbox": {
+          "type": "boolean",
+          "title": "Rental Income Lockbox?"
+        },
+        "lockboxType": {
+          "type": "string",
+          "title": "Rental Income Lockbox Type",
+          "description": "Only needed if isLockbox == true.",
+          "enum": [
+            "Hard",
+            "Soft",
+            "Springing"
+          ]
+        },
+        "lockboxBank": {
+          "type": "string",
+          "title": "Lockbox Bank",
+          "description": "Only needed if isLockbox == true."
+        },
+        "lockboxDate": {
+          "type": "string",
+          "format": "date",
+          "title": "First Rent Sweep Date for Hard Lockbox",
+          "description": "Only needed if isLockbox == true && lockboxType == 'Hard'."
+        },
+        "isImpounds": {
+          "type": "boolean",
+          "title": "Are there any tax and/or insurance impounds?"
+        },
+        "impounds": {
+          "type": "object",
+          "title": "Impounds",
+          "description": "Only used if isImpounds == true.",
+          "properties": {
+            "initialTax": {
+              "type": "number",
+              "title": "Initial Tax Escrow Amount"
+            },
+            "initialInsurance": {
+              "type": "number",
+              "title": "Initial Insurance Escrow Amount"
+            },
+            "initialFlood": {
+              "type": "number",
+              "title": "Initial Flood Insurance Impound Amount"
+            },
+            "monthlyTax": {
+              "type": "number",
+              "title": "Monthly Tax Payment Amount"
+            },
+            "monthlyInsurance": {
+              "type": "number",
+              "title": "Monthly Property Insurance Amount"
+            },
+            "monthlyFlood": {
+              "type": "number",
+              "title": "Monthly Flood Insurance Impound"
+            },
+            "monthlyCapEx": {
+              "type": "number",
+              "title": "Monthly CapEx Impounds"
+            }
+          }
+        },
+        "interestReserve": {
+          "type": "string",
+          "title": "Debt Service Reserve (Interest Reserve)?",
+          "enum": [
+            "None",
+            "Dollar Amount",
+            "Monthly Payments"
+          ],
+          "description": "Optional; sending no answer is functionally equivalent to answering 'None'."
+        },
+        "interestReserveAmount": {
+          "type": "number",
+          "title": "Amount/Months of Reserve",
+          "description": "Only needed if interestReserve == 'Dollar Amount' || interestReserve == 'Monthly Payments'."
+        },
+        "interestReserveMinimum": {
+          "type": "number",
+          "title": "Minimum Interest Reserve Balance",
+          "description": "Only needed if interestReserve == 'Dollar Amount' || interestReserve == 'Monthly Payments'."
+        },
+        "isTaxReserve": {
+          "type": "boolean",
+          "title": "Property Tax Reserve?"
+        },
+        "taxReserve": {
+          "type": "number",
+          "title": "Amount",
+          "description": "Only needed if isTaxReserve == true."
+        },
+        "isPropertyInsuranceReserve": {
+          "type": "boolean",
+          "title": "Property Insurance Reserve"
+        },
+        "propertyInsuranceReserve": {
+          "type": "number",
+          "title": "Amount",
+          "description": "Only needed if isPropertyInsuranceReserve == true."
+        },
+        "isCapExReserve": {
+          "type": "boolean",
+          "title": "Capital Expenditure Reserve"
+        },
+        "capExReserve": {
+          "type": "number",
+          "title": "Amount",
+          "description": "Only needed if isCapExReserve == true."
+        },
+        "isAppraisalReserve": {
+          "type": "boolean",
+          "title": "Appraisal Reserve"
+        },
+        "appraisalReserve": {
+          "type": "number",
+          "title": "Amount",
+          "description": "Only needed if isAppraisalReserve == true."
+        },
+        "defaultReserve": {
+          "type": "string",
+          "title": "Default Reserve?",
+          "enum": [
+            "None",
+            "Amount",
+            "Months"
+          ],
+          "description": "Optional; sending no answer is functionally equivalent to answering 'None'."
+        },
+        "defaultReserveAmount": {
+          "type": "number",
+          "title": "Amount/Months of Reserve",
+          "description": "Only needed if defaultReserve == 'Amount' || defaultReserve == 'Months'."
+        },
+        "isOccupancyReserve": {
+          "type": "boolean",
+          "title": "Occupancy Reserve?"
+        },
+        "occupancyReserveAmount": {
+          "type": "number",
+          "title": "Amount of Reserve",
+          "description": "Only needed if isOccupancyReserve == true."
+        },
+        "occupancyDeadline": {
+          "type": "string",
+          "format": "date",
+          "title": "Deadline to Vacate",
+          "description": "Only needed if isOccupancyReserve == true."
+        },
+        "isGeneralReserve": {
+          "type": "boolean",
+          "title": "Lender General Reserve?"
+        },
+        "generalReserve": {
+          "type": "number",
+          "title": "Amount",
+          "description": "Only needed if isGeneralReserve == true."
+        },
+        "isImprovementReserve": {
+          "type": "boolean",
+          "title": "Tenant Improvement Reserve?"
+        },
+        "improvementReserve": {
+          "type": "number",
+          "title": "Amount",
+          "description": "Only needed if isImprovementReserve == true."
+        }
+      }
+    },
+    "settlement": {
+      "type": "object",
+      "properties": {
+        "perDiemDelivery": {
+          "type": "string",
+          "title": "Per Diem Interest Payable and Delivered to",
+          "enum": [
+            "Lender's Address",
+            "Broker's Address",
+            "Loan Servicer's Address",
+            "Net Funded to Lender"
+          ]
+        },
+        "brokerFees": {
+          "type": "array",
+          "title": "Broker Fees",
+          "items": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "title": "Amount"
+              },
+              "feeDescription": {
+                "type": "string",
+                "title": "Description"
+              },
+              "comment": {
+                "type": "string",
+                "title": "Comment",
+                "enum": [
+                  "Deliver to Broker's Address",
+                  "Deliver to Lender's Address",
+                  "Payment deferred until after Closing",
+                  "Delivery Instructions to be Provided",
+                  "Fee Paid Outside of Closing",
+                  "To Be Net Funded",
+                  "Show as Credited",
+                  "Deliver to Loan Servicer",
+                  "Wire Instructions to be Provided",
+                  "See Attached Invoice"
+                ]
+              }
+            }
+          }
+        },
+        "lenderFees": {
+          "type": "array",
+          "title": "Lender Fees",
+          "items": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "title": "Amount"
+              },
+              "feeDescription": {
+                "type": "string",
+                "title": "Description"
+              },
+              "delivery": {
+                "type": "string",
+                "title": "Comment",
+                "enum": [
+                  "Deliver to Broker's Address",
+                  "Deliver to Lender's Address",
+                  "Payment deferred until after Closing",
+                  "Delivery Instructions to be Provided",
+                  "Fee Paid Outside of Closing",
+                  "To Be Net Funded",
+                  "Show as Credited",
+                  "Deliver to Loan Servicer",
+                  "Wire Instructions to be Provided",
+                  "See Attached Invoice"
+                ]
+              }
+            }
+          }
+        },
+        "otherFees": {
+          "type": "array",
+          "title": "Other Fees",
+          "items": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "title": "Amount"
+              },
+              "feeDescription": {
+                "type": "string",
+                "title": "Description"
+              },
+              "comment": {
+                "type": "string",
+                "title": "Comment",
+                "enum": [
+                  "Deliver to Broker's Address",
+                  "Deliver to Lender's Address",
+                  "Payment deferred until after Closing",
+                  "Delivery Instructions to be Provided",
+                  "Fee Paid Outside of Closing",
+                  "To Be Net Funded",
+                  "Show as Credited",
+                  "Deliver to Loan Servicer",
+                  "Wire Instructions to be Provided",
+                  "See Attached Invoice"
+                ]
+              },
+              "payee": {
+                "type": "string",
+                "title": "Paid to"
+              }
+            }
+          }
+        }
+      }
+    },
+    "additionalDocuments": {
+      "type": "object",
+      "title": "Additional Documents",
+      "properties": {
+        "isPropertyManagement": {
+          "type": "boolean",
+          "title": "Assignment of Property Management Agreement"
+        },
+        "propertyManagement": {
+          "type": "array",
+          "title": "Assignments of Property Management Agreement",
+          "description": "Only needed if isGeneralReserve == true.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "usesScheduleOfProperties": {
+                "type": "boolean",
+                "title": "Uses Schedule of Properties",
+                "description": "This property is ignored by the interpreter. It can optionally be sent as 'true' to prompt validation functions using the final validation schema to validate the correct properties within this object."
+              },
+              "propertySelect": {
+                "type": "string",
+                "title": "Select Property for this Assignment",
+                "description": "Give the Property ID (APN) of the collateral property for which you want an Assignment of Property Management Agreement. Used when isScheduleOfProperties != true."
+              },
+              "propertyAddress": {
+                "title": "Give Address for the Property for this Assignment",
+                "description": "Address for the collateral property for which this Assignment is to be made. Only used isScheduleOfProperties == true.",
+                "$ref": "#/definitions/address"
+              },
+              "manager": {
+                "type": "string",
+                "title": "Property Manager"
+              },
+              "agreeementDate": {
+                "type": "string",
+                "format": "date",
+                "title": "Property Management Agreement Date"
+              },
+              "managerAddress": {
+                "title": "Property Manager Address",
+                "$ref": "#/definitions/address"
+              }
+            }
+          }
+        },
+        "isW9": {
+          "type": "boolean",
+          "title": "Include W9?"
+        },
+        "isFirstPaymentLetter": {
+          "type": "boolean",
+          "title": "Include First Payment Letter?"
+        },
+        "firstPaymentAmount": {
+          "type": "number",
+          "title": "First Payment Amount (this includes any monthly impounds)",
+          "description": "Only needed if isFirstPaymentLetter == true."
+        },
+        "isUseFirstPayment": {
+          "type": "boolean",
+          "title": "Use this amount (less monthly impounds, if any) wherever the initial payment amount appears?",
+          "description": "Only used if isFirstPaymentLetter == true."
+        },
+        "isConstructionCompletionGuaranty": {
+          "type": "boolean",
+          "title": "Include Third Party Construction Completion Guaranty?"
+        },
+        "constructionCompletionGuaranties": {
+          "type": "array",
+          "title": "Give the Guarantor Name for each Construction Completion Guaranty",
+          "description": "Only needed if isConstructionCompletionGuaranty == true.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isLoanSale": {
+          "type": "boolean",
+          "title": "Is this loan intended for sale?"
+        },
+        "loanSale": {
+          "type": "object",
+          "title": "Loan Sale Information",
+          "description": "Only needed if isLoanSale == true.",
+          "properties": {
+            "saleType": {
+              "type": "string",
+              "title": "When will the loan be sold?",
+              "enum": [
+                "Concurrent",
+                "After"
+              ]
+            },
+            "assignee": {
+              "type": "string",
+              "title": "Select the loan purchaser or select 'Other' to enter the loan purchaser name(s) and address manually, or leave blank and a blank Assignment and Allonge will be produced.",
+              "description": "Possible answers vary by user. Check the relevant question on the Lightning Docs form for options, or contact Lightning Docs support. 'Other' may be used to give an assignee name and address using the properties below."
+            },
+            "assigneeInformation": {
+              "type": "object",
+              "title": "Assignee Information",
+              "description": "Only needed if assignee == 'Other'.",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "title": "Assignee name"
+                },
+                "address": {
+                  "title": "Contractor Street Address for Notice",
+                  "$ref": "#/definitions/address"
+                }
+              }
+            },
+            "isCollateralAssignment": {
+              "type": "boolean",
+              "title": "Collateral Assignment?",
+              "description": "Only used if saleType == 'Concurrent'"
+            },
+            "collateralDate": {
+              "type": "string",
+              "format": "date",
+              "title": "Assignee Loan Documents Date",
+              "description": "Only used if saleType == 'Concurrent' && isCollateralAssignment == true."
+            },
+            "assignmentDate": {
+              "type": "string",
+              "format": "date",
+              "title": "Assignment Date?",
+              "description": "CLIENT SPECIFIC"
+            },
+            "isAssignmentResale": {
+              "type": "boolean",
+              "title": "Include additional Assignment and Allonge for future assignment by Assignee?"
+            }
+          }
+        },
+        "isLoanSubordination": {
+          "type": "boolean",
+          "title": "Produce Loan Subordination Agreement / Intercreditor Agreement Signed by Lender and other Lenders Making Loans on the Property?"
+        },
+        "loanSubordination": {
+          "type": "array",
+          "title": "Loan Subordination / Intercreditor Agreement Information",
+          "description": "Only needed if isLoanSubordination == true.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "usesScheduleOfProperties": {
+                "type": "boolean",
+                "title": "Uses Schedule of Properties",
+                "description": "This property is ignored by the interpreter. It can optionally be sent as 'true' to prompt validation functions using the final validation schema to validate the correct properties within this object."
+              },
+              "propertySelect": {
+                "type": "string",
+                "title": "Select Property for this Loan Subordination",
+                "description": "Give the Property ID (APN) of the collateral property for which you want a Loan Subordination and Intercreditor Agreement. Used when isScheduleOfProperties != true."
+              },
+              "propertyAddress": {
+                "title": "Give Address for the Property for this Loan Subordination",
+                "description": "Address for the collateral property for which this Loan Subordination is to be made. Only used if isScheduleOfProperties == true.",
+                "$ref": "#/definitions/address"
+              },
+              "lenderType": {
+                "type": "string",
+                "title": "Lender is the",
+                "enum": [
+                  "Senior",
+                  "Subordinate"
+                ]
+              },
+              "documentType": {
+                "type": "string",
+                "title": "Document Type",
+                "enum": [
+                  "Senior",
+                  "Junior"
+                ]
+              },
+              "recording": {
+                "type": "string",
+                "title": "Document Recording",
+                "enum": [
+                  "Existing",
+                  "Concurrent"
+                ]
+              },
+              "debtAmount": {
+                "type": "number",
+                "title": "Debt Amount"
+              },
+              "subordinateLenders": {
+                "type": "array",
+                "title": "Subordinate Lenders",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "lender": {
+                      "type": "string",
+                      "title": "Subordinate Lender"
+                    },
+                    "investedAmount": {
+                      "type": "number",
+                      "title": "Invested Amount",
+                      "description": "The sum of this amount over all Subordinate Lenders should equal debtAmount."
+                    }
+                  }
+                }
+              },
+              "subordinateLendersAddress": {
+                "title": "Subordinate Lender Address",
+                "$ref": "#/definitions/address"
+              }
+            }
+          }
+        },
+        "isAKA": {
+          "type": "boolean",
+          "title": "Do any individuals require Signature Affidavit and AKA Statement?"
+        },
+        "akaInformation": {
+          "type": "array",
+          "title": "Enter all individuals who require an AKA",
+          "description": "Only needed if isAKA == true.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Select Individual [Give the name for whom the Signature Affidavit is to be made]"
+              },
+              "aka": {
+                "type": "array",
+                "title": "Enter all AKAs",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "isBorrowerCertification": {
+          "type": "boolean",
+          "title": "Include Borrower Cerification and Authorization?"
+        }
+      }
+    },
+    "documentCustomization": {
+      "type": "object",
+      "properties": {
+        "isRemoveArbitration": {
+          "type": "boolean",
+          "title": "Remove Arbitration Provisions?",
+          "description": "Use of this property should be combined with enableFeatures.enableRemoveArbitration == true"
+        },
+        "isRemoveLanguageCapacity": {
+          "type": "boolean",
+          "title": "Remove Language Capacity Declaration",
+          "description": "Use of this property should be combined with enableFeatures.enableRemoveLanguageCapacity == true"
+        },
+        "isRemoveInitialLines": {
+          "type": "boolean",
+          "title": "Remove initial lines from document footers?",
+          "description": "Use of this property should be combined with enableFeatures.enableRemoveInitials == true"
+        },
+        "isRemoveEntityCertificates": {
+          "type": "boolean",
+          "title": "Remove All Entity Certificates",
+          "description": "Use of this property should be combined with enableFeatures.enableRemoveCertificates == true"
+        },
+        "isRemoveTitleInsurance": {
+          "type": "boolean",
+          "title": "Remove Title Insurance Policy?",
+          "description": "Use of this property should be combined with enableFeatures.enableRemoveTitlePolicy == true"
+        },
+        "isIncludeCoverpage": {
+          "type": "boolean",
+          "title": "Include Coverpage for documents that require initials or completion?",
+          "description": "Use of this property should be combined with enableFeatures.enableSignerWarning == true"
+        },
+        "isIncludeMasterGuaranty": {
+          "type": "boolean",
+          "title": "Include reference to a Master Guaranty?"
+        },
+        "masterGuarantyDate": {
+          "type": "string",
+          "format": "date",
+          "title": "Date of Master Guaranty",
+          "description": "Only needed if isIncludeMasterGuaranty == true."
+        },
+        "masterGuarantor": {
+          "type": "string",
+          "title": "Guarantor Name(s)",
+          "description": "Only needed if isIncludeMasterGuaranty == true."
+        },
+        "isNoFillNonOwnerOccupancy": {
+          "type": "boolean",
+          "title": "Use no-fill Certification of Non-Owner Occupancy?",
+          "description": "Use of this property should be combined with enableFeatures.enableNoFill == true"
+        },
+        "isNoFillBusinessPurpose": {
+          "type": "boolean",
+          "title": "Use no-fill Business Purpose of Loan Certification?",
+          "description": "Use of this property should be combined with enableFeatures.enableNoFill == true"
+        }
+      }
+    },
+    "isAcknowledgeComplianceWarnings": {
+      "type": "boolean",
+      "title": "I (i) acknowledge and understand the impact of each of the notices above, (ii) have taken all actions necessary to ensure that your loan and its terms are compliant, and (iii) would like to proceed with the loan terms as indicated in this interview."
+    }
+  }
+}
