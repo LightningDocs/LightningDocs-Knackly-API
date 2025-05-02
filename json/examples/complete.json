@@ -159,8 +159,20 @@
   },
   "additionalDocuments": {
     "isLoanSale": true,
-    "loanSale": "After",
-    "assignee": "Other"
+    "loanSale": {
+      "saleType": "After",
+      "isAssignmentResale": true,
+      "assignee": "Other",
+      "assigneeInformation": {
+        "name": "Alice the Assignee",
+        "address": {
+          "street": "987 Abbot Avenue",
+          "city": "Arlington",
+          "state": "Arkansas",
+          "zip": "98765"
+        }
+      }
+    }
   },
   "documentCustomization": {
     "isNoFillNonOwnerOccupancy": true,
