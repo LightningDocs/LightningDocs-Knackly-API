@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "version": "1.3.8",
+  "version": "1.3.10",
   "type": "object",
   "definitions": {
     "states": {
@@ -139,6 +139,26 @@
           "type": "boolean",
           "title": "Is the Grantor a Foreign National??",
           "usage": "Only used if entityType == 'individual'"
+        },
+        "beneficialOwners": {
+          "type": "array",
+          "title": "Beneficial Owners for Grantor",
+          "usage": "Only needed if entityType != 'individual'",
+          "description": "This array collects the beneficial owners for this Grantor.",
+          "items": {
+            "type": "object",
+            "description": "This object contains the attributes that make up a beneficial owner. Currently, only used for credit unions.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "ownershipPercentage": {
+                "type": "number",
+                "title": "Ownership Percentage"
+              }
+            }
+          }
         },
         "complexSigners": {
           "type": "array",
@@ -389,7 +409,7 @@
       "usage": "CONFIGURATION. Optional when enableWorkItemName == true.",
       "description": "Due to file system limitations, any slashes (/) will be replaced with hyphen (-)."
     },
-    "loanProduct": {
+    "product": {
       "type": "string",
       "title": "Loan Type",
       "usage": "CLIENT SPECIFIC",
@@ -414,10 +434,7 @@
       "type": "string",
       "title": "Is this the first transaction or subsequent transaction?",
       "usage": "Required when isLineOfCredit == true",
-      "enum": [
-        "First Transaction",
-        "Subsequent Transaction"
-      ]
+      "enum": ["First Transaction", "Subsequent Transaction"]
     },
     "isBuildingLoanStandalone": {
       "type": "boolean",
@@ -462,7 +479,7 @@
     },
     "enableFeatures": {
       "type": "object",
-      "description": "This object contains properties that allow you to enable features normally not viewable by the user. It does NOT, on its own, control whether or not a given loan feature is actually on or off for the transaction. The following loan features are UNAVAILABLE by default. Make features available to the user by making the appropriate value 'true'. (It is best practice to enable visibility for any features to be used in a given transaction). Generally speaking these features should only be enabled after consultation with Geraci LLP legal counsel.",
+      "description": "This object contains properties that allow you to enable features normally not viewable by the user. It does NOT, on its own, control whether or not a given loan feature is actually on or off for the transaction. The following loan features are UNAVAILABLE by default. Make features available to the user by making the appropriate value 'true'. (It is best practice to enable visibility for any features to be used in a given transaction). Generally speaking these features should only be enabled after consultation with Fortra Law legal counsel.",
       "usage": "CONFIGURATION",
       "properties": {
         "enableLenderReserve": {
@@ -661,7 +678,7 @@
         },
         "enableCollateralAssignment": {
           "type": "boolean",
-          "title": "Enable Modification to Loan Assignment to Collateral Assignment of Loan",
+          "title": "Enable Modification of Loan Assignment to Collateral Assignment of Loan",
           "description": "This option will allow you to select on a loan by loan basis whether the sale and assignment of the loan to an investor is being made as collateral for an underlying obligation between the seller (assignor) and the purchaser (assignee). This option is typically used when the loan is being assigned to a warehouse lender and the Assignment is not being made as a 'true' assignment of the loan but rather solely for collateral purposes."
         },
         "enableIntercreditorAgreement": {
@@ -704,9 +721,9 @@
           "description": "Enabling this permission will show 'Will the interest rate automatically increase during the loan term (Step Up)?' in the loan interview under the Standard Loan Terms page. Users will determine on a loan-by-loan basis whether to use this feature if enabled. The feature is used when a lender would like the interest rate to change after a fixed time period during the loan and the lender knows the exact rate they would like the Note to change to (i.e. from 6% fixed to 9% fixed after 3 months). Note that even with this permission on, interest rate step is still incompatible with variable rate loans, and will thus be hidden in the interview if variable rate is selected."
         },
         "enableNonDutchAll": {
-            "type": "boolean",
-            "title": "Enable Non-Dutch Accrual of Interest for All Reserves",
-            "description": "Lender can choose to charge interest only on the amounts advanced to the borrower, commonly referred to as non-dutch interest, or the lender can choose to charge interest on the entire loan amount, commonly referred to as dutch interest. Enable this option if lender is only charging interest on amounts advanced to the borrower. By enabling this option, the loan documents will update the monthly payment amounts by taking the loan amount and subtracting the aggregate total of reserve amounts and will display this payment amount as the initial payment. The loan documents will also update the daily interest calculation for per diem interest. As the lender makes advances under the loan, the documents state that the monthly payments will increase over time. If you do not enable this option, interest will accrue on the entire loan amount (dutch interest), including all amounts held in reserve. The monthly payments will be calculated on the entire loan amount including any funds being reserved by lender. The monthly payments will remain the same during the loan term as interest is being charged on the entire loan amount."
+          "type": "boolean",
+          "title": "Enable Non-Dutch Accrual of Interest for All Reserves",
+          "description": "Lender can choose to charge interest only on the amounts advanced to the borrower, commonly referred to as non-dutch interest, or the lender can choose to charge interest on the entire loan amount, commonly referred to as dutch interest. Enable this option if lender is only charging interest on amounts advanced to the borrower. By enabling this option, the loan documents will update the monthly payment amounts by taking the loan amount and subtracting the aggregate total of reserve amounts and will display this payment amount as the initial payment. The loan documents will also update the daily interest calculation for per diem interest. As the lender makes advances under the loan, the documents state that the monthly payments will increase over time. If you do not enable this option, interest will accrue on the entire loan amount (dutch interest), including all amounts held in reserve. The monthly payments will be calculated on the entire loan amount including any funds being reserved by lender. The monthly payments will remain the same during the loan term as interest is being charged on the entire loan amount."
         },
         "enableLineOfCredit": {
           "type": "boolean",
@@ -737,6 +754,30 @@
           "type": "boolean",
           "title": "Enable the Removal of Lender's Closing Instructions",
           "description": "By enabling this Permission, the user on a loan by loan basis will be able to remove the Lender's Closing Instructions from the document package which will also remove any questions in the loan interview which are only used to populate the LCI. **If this permission is enabled, and the User enables the feature inside the loan interview the User MUST provide their own lender's instructions to the closing agent.**"
+        },
+        "enableAdditionalCovenants": {
+          "type": "boolean",
+          "title": "Enable Inclusion of Custom Additional Covenants",
+          "description": "By enabling this Permission, the user on a loan by loan basis will be able to add additional custom covenants to the loan documents. "
+        },
+        "enableDARTLanguage": {
+          "type": "boolean",
+          "title": "Enable DART Language to be used in the Documents",
+          "description": "DART refers to DART Collateral Manager LLC, a company which acts as a nominee for the lender. DART requires a variety of changes to the loan documents to comply with DART requirements. Selecting this option will apply those changes automatically. The lender must still submit the final documents to DART after loan closing."
+        },
+        "enableAmortizationSchedule": {
+          "type": "boolean",
+          "title": "Enable including an amortization schedule",
+          "description": "An amortization schedule is a detailed table showing each monthly loan payment, breaking down the amount applied to principal and interest, and tracking the remaining balance over time. By enabling this permission the user can select on a loan-by-loan basis whether to include an Amortization Schedule with the loan documents under the “Additional Documents” tab."
+        },
+        "enableServicerAccountNumber": {
+          "type": "boolean",
+          "title": "Enable giving an optional Servicer Account Number"
+        },
+        "enableAdditionalImpoundsCityCountyEtc": {
+          "type": "boolean",
+          "title": "Enable Additional Impounds for City, County, School, Town, Village Taxes",
+          "description": "By default, the interview provides impound options for general taxes, insurance, and flood insurance only. Select this option to allow the entry of additional tax impounds, including city, county, school, village, and town taxes."
         }
       }
     },
@@ -748,10 +789,7 @@
           "type": "string",
           "title": "Borrower notice sent to",
           "description": "The loan documents identify the notice address for the borrower in various different documents in the set.  Most borrowers want mail sent and/or addressed to them, however, some borrowers may want notices sent to a third party, such as a custodian.  Regardless of whether mail is to be delivered to the Borrower, or a Third Party, you will need to enter the name and address to which the notices should be sent.",
-          "enum": [
-            "Borrower",
-            "Other"
-          ]
+          "enum": ["Borrower", "Other"]
         },
         "deliveryTo": {
           "type": "string",
@@ -765,6 +803,16 @@
         "isAnyBorrowerIRA": {
           "type": "boolean",
           "title": "Is any Borrower an IRA or 401k?",
+          "usage": "CLIENT SPECIFIC"
+        },
+        "noticeEmail": {
+          "type": "string",
+          "title": "Notice email",
+          "usage": "CLIENT SPECIFIC"
+        },
+        "noticePhone": {
+          "type": "string",
+          "title": "Lender Phone",
           "usage": "CLIENT SPECIFIC"
         },
         "borrowers": {
@@ -846,11 +894,7 @@
               "guarantorType": {
                 "type": "string",
                 "title": "Type of guaranty",
-                "enum": [
-                  "Full",
-                  "Limited",
-                  "Springing"
-                ]
+                "enum": ["Full", "Limited", "Springing"]
               },
               "spousalSignature": {
                 "type": "boolean",
@@ -860,11 +904,7 @@
               "addressType": {
                 "type": "string",
                 "title": "Use which address for Guarantor?",
-                "enum": [
-                  "Borrower",
-                  "Property",
-                  "Other"
-                ]
+                "enum": ["Borrower", "Property", "Other"]
               },
               "address": {
                 "usage": "Only needed if addressType == 'Other'",
@@ -1158,10 +1198,7 @@
         "noticeTo": {
           "type": "string",
           "title": "Will notice be sent to the Lender or a Third Party on behalf of the Lender?",
-          "enum": [
-            "Lender",
-            "Third Party"
-          ]
+          "enum": ["Lender", "Third Party"]
         },
         "noticeRecipient": {
           "type": "string",
@@ -1245,6 +1282,16 @@
       "title": "Remove the standard ACH from the document set? (This will remove the ACH itself, but all references to it will remain.)",
       "usage": "Only used if isRemoveACH == true."
     },
+    "bankName_ACH": {
+      "type": "string",
+      "title": "Bank Name",
+      "usage": "CLIENT specific. Only used if isACH == true."
+    },
+    "bankDraftingPaymentsDay": {
+      "type": "integer",
+      "title": "Day of month for drafting payments",
+      "usage": "CLIENT specific. Only used if isACH == true."
+    },
     "servicerInformation": {
       "type": "object",
       "title": "Loan Servicer Information",
@@ -1282,6 +1329,11 @@
         }
       }
     },
+    "servicerAccountNumber": {
+      "type": "string",
+      "title": "Loan Servicer Account Number",
+      "usage": "Optional in First Payment Letter"
+    },
     "isBroker": {
       "type": "boolean",
       "title": "Is a Broker used on this transaction?"
@@ -1298,6 +1350,11 @@
         "license": {
           "type": "string",
           "title": "Broker License Number"
+        },
+        "yieldSpreadPremium": {
+          "type": "number",
+          "title": "Yield Spread Premium (%)",
+          "usage": "CLIENT SPECIFIC"
         },
         "address": {
           "$ref": "#/definitions/address"
@@ -1352,10 +1409,7 @@
         "altaVersion": {
           "type": "string",
           "title": "Select version of ALTA policy",
-          "enum": [
-            "2006",
-            "2021"
-          ],
+          "enum": ["2006", "2021"],
           "usage": "CLIENT SPECIFIC"
         },
         "isReduceCoverage": {
@@ -1417,14 +1471,15 @@
           "type": "string",
           "title": "Email Address"
         },
+        "phone": {
+          "type": "string",
+          "title": "Phone Number",
+          "usage": "CLIENT SPECIFIC"
+        },
         "addressType": {
           "type": "string",
           "title": "Address of Preparer",
-          "enum": [
-            "Lender",
-            "Broker",
-            "Other"
-          ]
+          "enum": ["Lender", "Broker", "Other"]
         },
         "address": {
           "usage": "Only needed if addressType == 'Other'",
@@ -1444,6 +1499,11 @@
         "email": {
           "type": "string",
           "title": "Email Address"
+        },
+        "phone": {
+          "type": "string",
+          "title": "Phone Number",
+          "usage": "CLIENT SPECIFIC"
         }
       }
     },
@@ -1464,12 +1524,25 @@
         "partialRelease": {
           "type": "string",
           "title": "Can the Borrower release any Property securing the Loan without paying off the entire Loan?",
-          "enum": [
-            "Release Price",
-            "Net Proceeds"
-          ],
+          "enum": ["Release Price", "Net Proceeds"],
           "usage": "Only needed if isPartialRelease == true",
-          "description": "COME BACK TO IT"
+          "description": "When 'Release Price' is a used releasePrice must be provided for each element in collateralProperties"
+        },
+        "releasePriceMultiplier": {
+          "type": "integer",
+          "title": "What multiple of the Allocated Loan Amount is each Release Price? (percentage, e.g. 120)",
+          "usage": "CLIENT SPECIFIC. Defaults to 120 if not answered."
+        },
+        "isScheduleOfReleasePrices": {
+          "type": "boolean",
+          "title": "User will attach a separate schedule of release prices to Loan Agreement?",
+          "usage": "Only used when isPartialRelease == true and partialRelease == 'Release Price'",
+          "description": "This will allow users to attach a custom schedule of release prices to the Loan Agreement instead of a table appearing in the loan documents. This is helpful in instances where there are a significant number of properties or in instances where a single parcel will be split into multiple parcels."
+        },
+        "releasePriceSchedule:": {
+          "type": "string",
+          "title": "Copy Property and Release Price information below.",
+          "usage": "Only needed if isScheduleOfReleasePrices == true. Information will appear as provided below without formatting. If no information is entered, a placeholder will be added after the Loan Agreement."
         },
         "legalDescription": {
           "type": "string",
@@ -1558,21 +1631,13 @@
               "propertyType": {
                 "type": "string",
                 "title": "Property Type",
-                "enum": [
-                  "Residential",
-                  "Multi-Family",
-                  "Commercial",
-                  "Vacant"
-                ],
+                "enum": ["Residential", "Multi-Family", "Commercial", "Vacant"],
                 "usage": "Only needed if the collateral property is in the state of Maryland, New York, Oregon, Pennsylvania, or Kentucky. (Some users have client-specific provisions that require it regardless of property state.) The 'Residential' option selects '1-6 Single Family Resident' in New York, and '1-4 Single Family Residence' in every other state. The 'Multi-Family' option selects '7+ Multi-Family Property' in New York, and '5+ Multi-Family Property' in every other state."
               },
               "rentalProperty": {
                 "type": "string",
                 "title": "Is this a residential rental property?",
-                "enum": [
-                  "Yes",
-                  "No"
-                ],
+                "enum": ["Yes", "No"],
                 "usage": "Only needed if state == 'Utah' While this property looks like it should be a boolean, it is set up as a string to prevent the system from automatically concluding that the collateral property IS NOT a rental property when no answer is provided. That would cause incorrect information to be entered into the security instrument."
               },
               "isLeaseholdMortgage": {
@@ -1597,7 +1662,7 @@
               "releasePrice": {
                 "type": "number",
                 "title": "Minimum Release Price",
-                "usage": "Only needed if collateral.isPartialRelease == true && collateral.partialRelease == 'Release Price'"
+                "usage": "Only needed if collateral.isPartialRelease == true && collateral.partialRelease == 'Release Price' && collateral.isScheduleofReleasePrices != true"
               },
               "releasePriceBuildingLoan": {
                 "type": "number",
@@ -1656,6 +1721,7 @@
                 "type": "array",
                 "title": "Owners",
                 "description": "This array collects the owners of this property.",
+                "usage": "This array is NOT needed when the following two conditions are true: (1) there is only one possible owner entered in the data file. This means that the loan has only one borrower, and no non-borrower property owners are involved. (2) The (one) borrower is NOT an 'individual'. That is, their 'entityType' is that of an entity, such as 'limited liability company', 'corporation', or 'trust'. Provided those two conditions are met, this array can be ignored (though there is no harm in including it).",
                 "items": {
                   "type": "object",
                   "description": "This object contains the attributes that make up an owner of this property.",
@@ -1668,7 +1734,8 @@
                     "vesting": {
                       "type": "string",
                       "title": "Vested As",
-                      "usage": "How the owner is vested, eg, 'a single man' or 'a married woman as her sole and separate property'. See lightningdocs for other examples, but the text can be anything; it need not be among the options given in lightningdocs. IMPORTANT: answer 'married' (without the quotes) for the FIRST of two married individuals vested together, then give the actual vesting for the second of the two. This will combine them together for vesting."
+                      "description": "How the owner is vested, eg, 'a single man' or 'a married woman as her sole and separate property'. See lightningdocs for other examples, but the text can be anything; it need not be among the options given in lightningdocs. IMPORTANT: answer 'married' (without the quotes) for the FIRST of two married individuals vested together, then give the actual vesting for the second of the two. This will combine them together for vesting.",
+                      "usage": "Required when the owner identified in 'owner' is an individual."
                     }
                   }
                 }
@@ -1702,9 +1769,24 @@
                     "trustee": {
                       "type": "string",
                       "title": "Senior Trustee"
+                    },
+                    "lenderAddress": {
+                      "type": "string",
+                      "title": "Senior Lender Address",
+                      "usage": ""
+                    },
+                    "accountNumber": {
+                      "type": "string",
+                      "title": "Senior Lender Loan/Account Number"
                     }
                   }
                 }
+              },
+              "manualVesting": {
+                  "type": "string",
+                  "title": "Manually enter vesting here. If left blank, it will default to the automatically generated vesting based on the property owners",
+                  "usage": "CLIENT SPECIFIC",
+                  "description": "Instead of using the automatic vesting that Lightning Docs creates as a combination of the various property owners and their own vestings, manually give a single vesting that will apply to the entire property as a whole."
               }
             }
           }
@@ -1756,11 +1838,7 @@
         "calculation": {
           "type": "string",
           "title": "Interest Calculation Type",
-          "enum": [
-            "30/360",
-            "360/Actual",
-            "365/Actual"
-          ],
+          "enum": ["30/360", "360/Actual", "365/Actual"],
           "default": "30/360",
           "description": "Normally monthly payments are established by creating a fictitious year of 360 days with even 30-day months. The payments are always the same each month even though there are a different number of actual days in each month. This is considered the standard method to calculate monthly payments. DSCR loans should always use 30/360. Some bridge lenders prefer to charge a daily interest rate and they can do so in one of two ways: 360/Actual: Instead of dividing the year into 30-day months, this method takes the yearly payment divided by 360 days and charges the daily amount each day so that the payments in a 30-day month are different than a 31-day month. Doing so will charge the borrower 5 extra days of interest each year. OR 365/Actual: In this method, the annual payment is divided by 365 days and similar to 360/Actual, the monthly payments will change based on how many calendar days are in each month. The actual amount paid over the year is the same as 30/360."
         },
@@ -1875,10 +1953,21 @@
             }
           }
         },
-        "isNonDutchAll": {
+        "isInterestRateReduction": {
             "type": "boolean",
-            "title": "Does interest accrue on all reserve funds only when they are advanced to the borrower? (non-dutch interest)",
-            "usage": "If this is answered true, loan.features.construction.isNonDutch does not need to also be answered true."
+            "title": "Include an interest rate reduction?",
+            "description": "CLIENT SPECIFIC"
+        },
+        "interestRateReduction": {
+            "type": "number",
+            "title": "Interest Rate Reduction Amount (%)",
+            "description": "CLIENT SPECIFIC.",
+            "usage": "Only needed if isInterestRateReduction == true."
+        },
+        "isNonDutchAll": {
+          "type": "boolean",
+          "title": "Does interest accrue on all reserve funds only when they are advanced to the borrower? (non-dutch interest)",
+          "usage": "If this is answered true, loan.features.construction.isNonDutch does not need to also be answered true."
         },
         "isMERS": {
           "type": "boolean",
@@ -1889,6 +1978,11 @@
           "type": "string",
           "title": "MERS Number",
           "usage": "Only needed if isMERS == true."
+        },
+        "isDARTLanguage": {
+          "type": "boolean",
+          "title": "Insert DART language in Loan Documents?",
+          "description": "DART refers to DART Collateral Manager LLC, a company which acts as a nominee for the lender. DART requires a variety of changes to the loan documents to comply with DART requirements. Selecting this option will apply those changes automatically. The lender must still submit the final documents to DART after loan closing."
         },
         "firstPaymentDate": {
           "type": "string",
@@ -2019,11 +2113,7 @@
         "prepaymentLockoutCalculation": {
           "type": "string",
           "title": "Penalty is Calculated From",
-          "enum": [
-            "Dollar Amount",
-            "Months",
-            "Prepaid"
-          ],
+          "enum": ["Dollar Amount", "Months", "Prepaid"],
           "usage": "Only needed if prepaymentPremium == 'Lockout'."
         },
         "prepaymentLockoutAmount": {
@@ -2120,11 +2210,7 @@
             "constructionType": {
               "type": "string",
               "title": "Type of Construction Reserve Language to be used",
-              "enum": [
-                "Simple",
-                "Standard",
-                "Extensive"
-              ]
+              "enum": ["Simple", "Standard", "Extensive"]
             },
             "reserveAmount": {
               "type": "number",
@@ -2151,6 +2237,11 @@
               "type": "number",
               "title": "Amount in Dollars (per draw)",
               "usage": "Only used if constructionType != 'Simple'."
+            },
+            "isSequentialDrawLanguage": {
+              "type": "boolean",
+              "title": "Include Sequential / Pro-Rate Draw Language?",
+              "usage": "CLIENT SPECIFIC"
             },
             "isInspectionFee": {
               "type": "boolean",
@@ -2184,6 +2275,11 @@
               "title": "Include a Separate Recordable Assignment of Permits and Agreements?",
               "usage": "Only used if constructionType != 'Simple'.",
               "description": "Allows the lender to take a collateral assignment of all permits and construction agreements and creates a recordable document that is separate from the Security Instrument."
+            },
+            "isAssignmentOfPermitsAll": {
+                "type": "boolean",
+                "title": "Make a single Assignment of Permits document referencing all properties on this loan?",
+                "usage": "Optional. Only used if isAssignmentOfPermits == true."
             },
             "assignmentOfPermitsProperties": {
               "type": "array",
@@ -2322,11 +2418,7 @@
             "feeType": {
               "type": "string",
               "title": "Extension Fee Type",
-              "enum": [
-                "None",
-                "Percent",
-                "Dollar"
-              ]
+              "enum": ["None", "Percent", "Dollar"]
             },
             "feeAmount": {
               "type": "number",
@@ -2359,11 +2451,7 @@
             "feeType": {
               "type": "string",
               "title": "Extension Fee Type",
-              "enum": [
-                "None",
-                "Percent",
-                "Dollar"
-              ]
+              "enum": ["None", "Percent", "Dollar"]
             },
             "feeAmount": {
               "type": "number",
@@ -2431,14 +2519,30 @@
           "title": "Deferred Payoff Fee",
           "usage": "CLIENT SPECIFIC. Optional."
         },
+        "deferredFeeDocumentDraw": {
+          "type": "number",
+          "title": "Deferred Document Draw Fee (if any)",
+          "usage": "CLIENT SPECIFIC. Optional."
+        },
+        "deferredFeeReconveyance": {
+          "type": "number",
+          "title": "Deferred Demand/Reconveyance Fee (if any)",
+          "usage": "CLIENT SPECIFIC. Optional."
+        },
+        "deferredFeeSubordination": {
+          "type": "number",
+          "title": "Deferred Subordination Fee (if any)",
+          "usage": "CLIENT SPECIFIC. Optional."
+        },
+        "deferredFeeUCC": {
+          "type": "number",
+          "title": "Deferred UCC Fee (if any)",
+          "usage": "CLIENT SPECIFIC. Optional."
+        },
         "deferredBrokerFee": {
           "type": "string",
           "title": "Deferred Broker Fees?",
-          "enum": [
-            "None",
-            "Dollar",
-            "Percent"
-          ],
+          "enum": ["None", "Dollar", "Percent"],
           "usage": "Optional; sending no answer is functionally equivalent to answering 'None'.",
           "description": "Selecting 'Yes' creates language that specifies the fee owed to the identified broker will be deferred to the earlier of the maturity date, the release of the property, or an event of default instead of being paid through the loan proceeds at time of loan origination."
         },
@@ -2450,11 +2554,7 @@
         "deferredOriginationFee": {
           "type": "string",
           "title": "Are you deferring any origination fees??",
-          "enum": [
-            "None",
-            "Dollar",
-            "Percent"
-          ],
+          "enum": ["None", "Dollar", "Percent"],
           "usage": "Optional; sending no answer is functionally equivalent to answering 'None'.",
           "description": "Selecting 'Yes' creates language that specifies the origination fee owed to lender will be deferred to the earlier of the maturity date, the release of the property, or an event of default instead of being paid through the loan proceeds at time of loan origination."
         },
@@ -2558,11 +2658,7 @@
           "type": "string",
           "title": "Rental Income Lockbox Type",
           "usage": "Only needed if isLockbox == true.",
-          "enum": [
-            "Hard",
-            "Soft",
-            "Springing"
-          ]
+          "enum": ["Hard", "Soft", "Springing"]
         },
         "lockboxBank": {
           "type": "string",
@@ -2596,6 +2692,31 @@
               "type": "number",
               "title": "Initial Flood Insurance Impound Amount"
             },
+            "initialCityTax": {
+              "type": "number",
+              "title": "Initial City Tax Escrow Amount",
+              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+            },
+            "initialCountyTax": {
+              "type": "number",
+              "title": "Initial County Tax Escrow Amount",
+              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+            },
+            "initialSchoolTax": {
+              "type": "number",
+              "title": "Initial School Tax Escrow Amount",
+              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."  
+            },
+            "initialTownTax": {
+              "type": "number",
+              "title": "Initial Town Tax Escrow Amount",
+              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+            },
+            "initialVillageTax": {
+              "type": "number",
+              "title": "Initial Village Tax Escrow Amount",
+              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0." 
+            },
             "monthlyTax": {
               "type": "number",
               "title": "Monthly Tax Payment Amount"
@@ -2611,17 +2732,38 @@
             "monthlyCapEx": {
               "type": "number",
               "title": "Monthly CapEx Impounds"
+            },
+            "monthlyCityTax": {
+              "type": "number",
+              "title": "Monthly City Tax Impound Amount",
+              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+            },
+            "monthlyCountyTax": {
+              "type": "number",
+              "title": "Monthly County Tax Impound Amount",
+              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+            },
+            "monthlySchoolTax": {
+              "type": "number",
+              "title": "Monthly School Tax Impound Amount",
+              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."  
+            },
+            "monthlyTownTax": {
+              "type": "number",
+              "title": "Monthly Town Tax Impound Amount",
+              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+            },
+            "monthlyVillageTax": {
+              "type": "number",
+              "title": "Monthly Village Tax Impound Amount",
+              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0." 
             }
           }
         },
         "interestReserve": {
           "type": "string",
           "title": "Debt Service Reserve (Interest Reserve)?",
-          "enum": [
-            "None",
-            "Dollar Amount",
-            "Monthly Payments"
-          ],
+          "enum": ["None", "Dollar Amount", "Monthly Payments"],
           "usage": "Optional; sending no answer is functionally equivalent to answering 'None'.",
           "description": "Some lenders prefer to holdback either a few months of interest or a specific dollar amount of interest to be used to pay the monthly interest only payments. This is most commonly used when the property has no cash flow such as with a construction loan. Instead of the borrower making monthly payments to the lender, the Debt Service Reserve will be used to make monthly payments until the funds are depleted."
         },
@@ -2694,11 +2836,7 @@
         "defaultReserve": {
           "type": "string",
           "title": "Default Reserve?",
-          "enum": [
-            "None",
-            "Amount",
-            "Months"
-          ],
+          "enum": ["None", "Amount", "Months"],
           "usage": "Optional; sending no answer is functionally equivalent to answering 'None'.",
           "description": "Selecting 'Yes' will add language to the loan documents so that in the event that your borrower defaults on the loan, the lender has the right to use the reserved funds to cover the costs of a) making required interest payments, b) making protective advances, or c) paying down the principal amount. If the lender uses or exhausts the funds, the lender can demand that the borrower replenish the Default Reserve. If they fail to replenish the default reserve, it is considered an additional event of default."
         },
@@ -2753,6 +2891,11 @@
           "title": "Require Cash Liquidity?",
           "usage": "CLIENT SPECIFIC"
         },
+        "cashLiquidityAmount": {
+          "type": "number",
+          "title": "Required Liquidity Amount ($)",
+          "usage": "CLIENT SPECIFIC"
+        },
         "isCollateralReserve": {
           "type": "boolean",
           "title": "Collateral Reserve?",
@@ -2762,6 +2905,21 @@
           "type": "number",
           "title": "Amount (in dollars)",
           "usage": "Only needed if isCollateralReserve == true."
+        },
+        "isCashCollateralAccount": {
+          "type": "boolean",
+          "title": "Cash Collateral Account?",
+          "description": "CLIENT SPECIFIC"
+        },
+        "cashCollateralMinimumBalance": {
+          "type": "number",
+          "title": "Account Minimum Balance",
+          "usage": "Only needed if isCashCollateralAccount == true."
+        },
+        "cashCollateralDisbursementConditions": {
+          "type": "number",
+          "title": "Conditions for Disbursement",
+          "usage": "Only needed if isCashCollateralAccount == true."
         }
       }
     },
@@ -2778,6 +2936,11 @@
             "Net Funded to Lender",
             "Delivery Instructions to be Provided"
           ]
+        },
+        "perDiemDays": {
+          "type": "integer",
+          "title": "Number of Days to Collect Per Diem",
+          "usage": "CLIENT SPECIFIC"
         },
         "brokerFees": {
           "type": "array",
@@ -2906,6 +3069,20 @@
                 "title": "Uses Schedule of Properties",
                 "usage": "This property is ignored by the interpreter. It can optionally be sent as 'true' to prompt validation functions using the final validation schema to validate the correct properties within this object."
               },
+              "isAllProperties": {
+                  "type": "boolean",
+                  "title": "Include all properties from this loan onto this assignment?",
+                  "usage": "Optional. Only used if there is more than one property on the loan."
+              },
+              "propertiesSelect": {
+                  "type": "array",
+                  "title": "Select the property(ies) to be included on this assignment",
+                  "usage": "Give the Property ID (APN) of each collateral property for which you want on this Assignment of Property Management. Only needed if isAllProperties == false, and there is more than one property on the loan.",
+                  "description": "This array collects the properties for which an Assignment of Property Management is needed.",
+                  "items": {
+                    "type": "string"
+                }
+              },
               "propertySelect": {
                 "type": "string",
                 "title": "Select Property for this Assignment",
@@ -2934,12 +3111,16 @@
         },
         "isW9": {
           "type": "boolean",
-          "title": "Include W9?"
+          "title": "Include W9 for each Borrower?"
         },
         "isW9Guarantors": {
           "type": "boolean",
           "title": "Include a W9 for each Guarantor?",
-          "usage": "CLIENT SPECIFIC"
+          "usage": "Optional when isW9 == true and there is at least one guarantor for the transaction"
+        },
+        "is4506C": {
+          "type": "boolean",
+          "title": "Include 4506C?"
         },
         "isShtarIska": {
           "type": "boolean",
@@ -2976,10 +3157,7 @@
             "saleType": {
               "type": "string",
               "title": "When will the loan be sold?",
-              "enum": [
-                "Concurrent",
-                "After"
-              ]
+              "enum": ["Concurrent", "After"]
             },
             "assignee": {
               "type": "string",
@@ -3067,26 +3245,17 @@
               "lenderType": {
                 "type": "string",
                 "title": "Lender is the",
-                "enum": [
-                  "Senior",
-                  "Subordinate"
-                ]
+                "enum": ["Senior", "Subordinate"]
               },
               "documentType": {
                 "type": "string",
                 "title": "Document Type",
-                "enum": [
-                  "Senior",
-                  "Junior"
-                ]
+                "enum": ["Senior", "Junior"]
               },
               "recording": {
                 "type": "string",
                 "title": "Document Recording",
-                "enum": [
-                  "Existing",
-                  "Concurrent"
-                ]
+                "enum": ["Existing", "Concurrent"]
               },
               "debtAmount": {
                 "type": "number",
@@ -3250,13 +3419,13 @@
         "occupancyPercent": {
           "type": "number",
           "title": "Percentage of Units to Lease?",
-          "usage": "Only needed if isOccupancyRequirement == true"
+          "usage": "Only used if isOccupancyRequirement == true"
         },
         "occupancyLeasedByDate": {
           "type": "string",
           "format": "date",
           "title": "Date by which Percentage of Units to be Leased",
-          "usage": "Only needed if isOccupancyRequirement == true"
+          "usage": "Only used if isOccupancyRequirement == true"
         },
         "occupancyDeadlines": {
           "type": "array",
@@ -3317,9 +3486,15 @@
           "title": "Date of first Rent Roll Report",
           "usage": "Only needed if isRentRollReporting == true"
         },
+        "reportingFrequency": {
+          "type": "string",
+          "title": "Financial reporting frequency",
+          "enum": ["Annually", "Semiannually", "Quarterly"],
+          "usage": "CLIENT SPECIFIC"
+        },
         "isMarkToMarket": {
           "type": "boolean",
-          "title": "Include Mark-to-Market Requirement?",
+          "title": "Include Maximum LTV Requirement / Include Maximum LTV Requirement?",
           "usage": "CLIENT SPECIFIC"
         },
         "markToMarketDate": {
@@ -3332,6 +3507,26 @@
           "type": "number",
           "title": "Maximum LTV",
           "usage": "Only needed if isMarkToMarket == true"
+        },
+        "isCompensatingBalance": {
+          "type": "boolean",
+          "title": "Include Compensating Balance Language?",
+          "usage": "CLIENT SPECIFIC"
+        },
+        "compensatingBalancePercent": {
+          "type": "number",
+          "title": "% of Loan Amount",
+          "usage": "Only needed if isCompensatingBalance == true"
+        },
+        "isAdditionalCovenants": {
+          "type": "boolean",
+          "title": "Include Additional Covenants(s)?",
+          "usage": "Used to add additional custom provisions, hidden behind a permission."
+        },
+        "additionalCovenants": {
+          "type": "string",
+          "title": "Additional Covenants",
+          "usage": "Only needed if isAdditionalCovenants == true"
         }
       }
     },
@@ -3396,21 +3591,15 @@
           "collateralType": {
             "type": "string",
             "title": "Type of UCC Filing",
-            "enum": [
-              "bank",
-              "blanket",
-              "other",
-              "both",
-              "custom"
-            ],
+            "enum": ["bank", "blanket", "other", "both", "custom"],
             "description": "Select: 'blanket' for a Blanket UCC filing, 'other' to enter a list of specific personal property, 'both' to do both of the above, and 'custom' to attach a custom list or exhibit to the UCC filing."
           },
-          "memberNumber":{
+          "memberNumber": {
             "type": "string",
             "title": "Member Number",
             "description": "Member Number, required if collateralType == 'bank'"
           },
-          "mininumBalance":{
+          "mininumBalance": {
             "type": "string",
             "title": "Account Minimum Balance",
             "description": "Minimum account balance, required if collateralType == 'bank'"
@@ -3541,6 +3730,11 @@
           }
         }
       }
+    },
+    "isContractForDeed": {
+      "type": "boolean",
+      "title": "Allow Contract for Deed?",
+      "usage": "Client specific"
     },
     "isAcknowledgeComplianceWarnings": {
       "type": "boolean",

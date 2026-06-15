@@ -1,81 +1,387 @@
-Dec 29, 2025
-Update and rename Data Model Schema 1.3.8
-Add new properties enableNonDutchAll (in "enableFeatures"); isNonDutchAll (in "loan"); isMaximumGuarantorLiability (in "guarantorInformation"); maximumLiabilityAmount (in "guarantors", "guarantorInformation"); legalDescriptionAbbreviated (in "collateral"); lastStepYearLength, extensionMargin, isDeferredFees, deferredFeeOrigination, deferredFeeBroker, deferredFeeDocumentPrep, deferredFeeAdministration, deferredFeePayoff,  deferredOriginationMonths, servicingFee, isHalfPayment, isCollateralReserve, and collateralReserve (in "features"); and memberNumber and mininumBalance (in "collateralSecurityAgreement")
+# Data Model Schema Changelog
 
-Remove occupancyAgreementDeliveryDate property (in "documentCustomization"), add occupancyDeadlines array in its place.
+## Version 1.3.10 — June 15, 2026
 
-Add "bank" to the list of enumerated values for collateralType (in "collateralSecurityAgreement").
+### New Permissions
 
-Deprecate allocatedLoanAmount (in "collateralProperties", "collateral").
+Added the following permissions to `enableFeatures`:
 
-Update various titles and descriptions for clarity and accuracy.
+- `enableAdditionalCovenants`
+- `enableDARTLanguage`
+- `enableAmortizationSchedule`
+- `enableServicerAccountNumber`
+- `enableAdditionalImpoundsCityCountyEtc`
 
+### New Properties
 
-Sep 21, 2025
-Update and rename Data Model Schema 1.3.7
-Switch former "description" values to the new "usage" key and change all "description" values to better describe the role the property in question plays within the transaction or loan documents.
-Add descriptor "CONFIGURATION" to the "usage" of all properties that, rather than representing a fact about the transaction, simply configure the questionnaire or otherwise alter the user experience.
-Add new client-specific properties throughout the data model.
-Add new top-level properties "isNoScenario" and "scenarioName".These properties allow the integration to prevent the user from selecting a scenario within the application.
-Add properties to the "enableFeatures" object and the "lenderInformation" object that allow the integration to send custom addresses (in place of the lender's notice address) for return of non-recordable documents and (separately) recordable documents.
-Add properties to the "enableFeatures" object and the "documentCustomization" object that allow the integration to exclude the Lender's Closing Instructions from the assembled documents.
-Add new property "releasePriceBuildingLoan" to the "collateralProperties" array properties, which allows the integration to specify a collateral release price for the New York Building Loan Agreement (in addition to using the "releasePrice" property to specify the same for the main loan).
-Add properties to the "collateralProperties" array properties that allow the integration to give details on a tenancy in common agreement.
-Rename "isEPA" property to "isEquityPledgeAgreement."
+#### Grantors (definition)
 
+- `beneficialOwners`
 
-Jun 17, 2025
-Update and Data Model Schema 1.3.6
-Add "isForeignNational" property to the "grantors" definition.
-Add the following top-level properties: "isCheckData", "customWorkItemName", "isBuildingLoanStandalone"
-Add "isBuildingLoanIntended" property to the "features" object for use with the New York Building Loan feature.
-Allow "assignmentOfPermitsProperties" to be sent both for "construction" and changed the version in "features" to "cannabisAssignmentOfPermitsProperties". When the same properties is entered for both the application automatically combines both assignments into one.
-Add properties to allow attribution of a MERS number for loan assignee in the "loanSale" object.
-Add various properties associated with client specific customizations.
-Changed various titles and descriptions for clarity and consistency.
+#### Top-Level
 
+- `bankName_ACH`
+- `bankDraftingPaymentsDay`
+- `servicerAccountNumber`
 
-Mar 26, 2025
-Update and rename 1.3.5
-Add "professional limited liability company" as a valid option for all properties that use the "entityTypes" definition.
-Borrowers, Non-Borrower Owners, Guarantors, and all their signers (down to the third level) can now have "owners" (and signers for their owners) defined for them.
-Remove the following permissions from the "enableFeatures" object as these features now appear in the default interview for all users: "enableBorrowerServicingFees", "enableMERS", "enableTranslator", "enableW9".
-The "trustee" property for "collateralProperties" objects now recommends that you leave this option unanswered unless the lender has a need for a specific trustee, as a generally satisfactory default is automatically applied within the produced documents.
-Add properties for New York (C)EMA and Building Loan Agreements.
-Add draws, inspection fee, and specified completion date options to the "construction" object.
-Build additional capabilities and options into the automatic extension feature.
-Add options for Guarantor W9s and Third Party Affiliates to the "additionalDocuments" object.
-Add cash collateral feature to the "documentCustomization" object.
-Add properties related to various client specific features.
-Update numerous titles and descriptions to better correspond to the Lightning Docs interview.
+#### `borrowerInformation`
 
-Sep 24, 2024
-Update and rename 1.3.4
-Remove certain features to be allowed behind new permissions in the "enableFeatures" object, including: "enableInterestRateStep", "enableLineOfCredit", "enableMasterGuaranty", "enableProFormaPolicy", "enableDeferredPayments".
+- `noticeEmail`
+- `noticePhone`
 
-Add new feature to "features" object: "isDeferredPayments".
+#### `brokerInformation`
 
-Add additional option for per diem interest delivery: "Delivery Instructions to be Provided".
+- `yieldSpreadPremium`
 
-All fee arrays in the "settlement" object now use "delivery" as the name of the property that describes how the fee is to be delivered. (Previously it was "comment" for some, "delivery" for others.)
+#### `preparerInformation`
 
+- `phone`
 
-Sep 3, 2024
-Update and rename to 1.3.3
-Add new property "transactionID". 
+#### `closingContact`
 
-Add new permissions: "enableShtarIska", "enableWorkItemName", "enableFirstPaymentDate", "enableRemoveCognovit", and "enableBridgeToPerm". Split permission "enableNoFill" into two permissions: "enableNoFillCertNonOwner" and "enableNoFillBusinessPurpose". Changed permission "enableComplexSigners" to "enableEntityOwnership". 
+- `phone`
 
-In "titleInformation" object add "isRemoveTitleInsurance" property.
+#### `collateral`
 
-In "escrowInformation" object remove "address" property.
+- `isScheduleOfReleasePrices`
+- `releasePriceSchedule`
+- `releasePriceMultiplier`
 
-In "collateralProperties" array in "collateral" object add "allocatedLoanAmount" property.
+#### `collateral.collateralProperties`
 
-In "features" object: Add "isPrepaymentPremium" property and remove "None" as an option for the "prepaymentPremium" property. Split "interestReserveAmount" into two properties (to be used depending on the answer to "interestReserve"): "interestReserveDollars" ("Dollar Amount") and "interestReserveMonths" ("Monthly Payments"). Add "appraisalARV" property. Split "defaultReserveAmount" into two properties (to be used depending on the answer to "defaultReserve"): "defaultReserveDollars" ("Amount") and "defaultReserveMonths" ("Months"). Add "isShtarIska" property. In "construction" object add the following: "draws" property, "isConstructionCompletionGuaranty" property, and "constructionCompletionGuarantors" array.
+- `manualVesting`
 
-Complete schemas for "collateralSecurityAgreement" and "equityPledgeAgreement".
+#### `collateral.collateralProperties.seniorLiens`
 
-Make significant changes to titles and discriptions throughout the data model to better align them with the interview and to add clarity (will not alter functionality).
+- `lenderAddress`
+- `accountNumber`
 
-Change numerous properties of "number" type to "integer" type to make it more clear which properties accept decimal values.
+#### `loan`
+
+- `isInterestRateReduction`
+- `interestRateReduction`
+- `isDARTLanguage`
+
+#### `features`
+
+- `deferredFeeDocumentDraw`
+- `deferredFeeReconveyance`
+- `deferredFeeSubordination`
+- `deferredFeeUCC`
+- `cashLiquidityAmount`
+- `isCashCollateralAccount`
+- `cashCollateralMinimumBalance`
+- `cashCollateralDisbursementConditions`
+
+#### `features.construction`
+
+- `isSequentialDrawLanguage`
+- `isAssignmentOfPermitsAll`
+
+#### `features.impounds`
+
+Initial tax fields:
+
+- `initialCityTax`
+- `initialCountyTax`
+- `initialSchoolTax`
+- `initialTownTax`
+- `initialVillageTax`
+
+Monthly tax fields:
+
+- `monthlyCityTax`
+- `monthlyCountyTax`
+- `monthlySchoolTax`
+- `monthlyTownTax`
+- `monthlyVillageTax`
+
+#### `settlement`
+
+- `perDiemDays`
+
+#### `additionalDocuments`
+
+- `is4506C`
+
+#### `additionalDocuments.propertyManagement`
+
+- `isAllProperties`
+- `propertiesSelect`
+
+#### `documentCustomization`
+
+- `reportingFrequency`
+- `isCompensatingBalance`
+- `compensatingBalancePercent`
+- `isAdditionalCovenants`
+- `additionalCovenants`
+
+#### `equityPledgeAgreement`
+
+- `isContractForDeed`
+
+### Other Changes
+
+- Updated various descriptions, titles, and usage notes for accuracy.
+
+---
+
+## Version 1.3.8 — December 29, 2025
+
+### New Properties
+
+#### `enableFeatures`
+
+- `enableNonDutchAll`
+
+#### `loan`
+
+- `isNonDutchAll`
+
+#### `guarantorInformation`
+
+- `isMaximumGuarantorLiability`
+
+#### `guarantors`
+#### `guarantorInformation`
+
+- `maximumLiabilityAmount`
+
+#### `collateral`
+
+- `legalDescriptionAbbreviated`
+
+#### `features`
+
+- `lastStepYearLength`
+- `extensionMargin`
+- `isDeferredFees`
+- `deferredFeeOrigination`
+- `deferredFeeBroker`
+- `deferredFeeDocumentPrep`
+- `deferredFeeAdministration`
+- `deferredFeePayoff`
+- `deferredOriginationMonths`
+- `servicingFee`
+- `isHalfPayment`
+- `isCollateralReserve`
+- `collateralReserve`
+
+#### `collateralSecurityAgreement`
+
+- `memberNumber`
+- `minimumBalance`
+
+### Replaced Properties
+
+Removed:
+
+- `occupancyAgreementDeliveryDate`
+
+Added:
+
+- `occupancyDeadlines` (array)
+
+### Other Changes
+
+- Added `"bank"` as a valid `collateralType` value in `collateralSecurityAgreement`.
+- Deprecated `allocatedLoanAmount` in `collateralProperties` and `collateral`.
+- Updated various titles and descriptions for clarity and accuracy.
+
+---
+
+## Version 1.3.7 — September 21, 2025
+
+### Documentation Improvements
+
+- Migrated former `description` values to the new `usage` key.
+- Updated all `description` values to better describe each property's role in the transaction and generated documents.
+- Added the `CONFIGURATION` usage descriptor to properties that affect interview behavior rather than transaction data.
+
+### New Properties
+
+#### Top-Level
+
+- `isNoScenario`
+- `scenarioName`
+
+These properties allow integrations to prevent users from selecting a scenario within the application.
+
+### Additional Enhancements
+
+- Added client-specific properties throughout the data model.
+- Added support for custom addresses for returning recordable and non-recordable documents.
+- Added support for excluding Lender's Closing Instructions from assembled documents.
+- Added `releasePriceBuildingLoan` to `collateralProperties`.
+- Added tenancy-in-common related properties to `collateralProperties`.
+
+### Renamed Properties
+
+| Previous Name | New Name |
+|--------------|-----------|
+| `isEPA` | `isEquityPledgeAgreement` |
+
+---
+
+## Version 1.3.6 — June 17, 2025
+
+### New Properties
+
+#### `grantors`
+
+- `isForeignNational`
+
+#### Top-Level
+
+- `isCheckData`
+- `customWorkItemName`
+- `isBuildingLoanStandalone`
+
+#### `features`
+
+- `isBuildingLoanIntended`
+
+### Feature Enhancements
+
+- `assignmentOfPermitsProperties` can now be provided for both construction and cannabis permit assignments.
+- Added MERS number support for loan assignees in `loanSale`.
+- Added multiple client-specific customization properties.
+
+### Other Changes
+
+- Updated titles and descriptions for clarity and consistency.
+
+---
+
+## Version 1.3.5 — March 26, 2025
+
+### New Capabilities
+
+- Added `"professional limited liability company"` as a valid value wherever the `entityTypes` definition is used.
+- Borrowers, Non-Borrower Owners, Guarantors, and their signers can now have nested ownership structures and signer hierarchies.
+
+### Removed Permissions
+
+The following permissions were removed from `enableFeatures` because the associated features are now available by default:
+
+- `enableBorrowerServicingFees`
+- `enableMERS`
+- `enableTranslator`
+- `enableW9`
+
+### New Features
+
+- Added support for New York (C)EMA and Building Loan Agreements.
+- Added construction draw schedules, inspection fees, and specified completion dates.
+- Expanded automatic extension functionality.
+- Added Guarantor W-9 and Third Party Affiliate options.
+- Added cash collateral options to `documentCustomization`.
+- Added various client-specific feature properties.
+
+### Documentation Updates
+
+- Updated numerous titles and descriptions to better align with the Lightning Docs interview.
+
+---
+
+## Version 1.3.4 — September 24, 2024
+
+### Permission Changes
+
+The following features were moved behind new permissions in `enableFeatures`:
+
+- `enableInterestRateStep`
+- `enableLineOfCredit`
+- `enableMasterGuaranty`
+- `enableProFormaPolicy`
+- `enableDeferredPayments`
+
+### New Features
+
+#### `features`
+
+- `isDeferredPayments`
+
+### Other Changes
+
+- Added `"Delivery Instructions to be Provided"` as a per diem interest delivery option.
+- Standardized all fee arrays in `settlement` to use the property name `delivery` for delivery instructions.
+
+---
+
+## Version 1.3.3 — September 3, 2024
+
+### New Properties
+
+#### Top-Level
+
+- `transactionID`
+
+### New Permissions
+
+- `enableShtarIska`
+- `enableWorkItemName`
+- `enableFirstPaymentDate`
+- `enableRemoveCognovit`
+- `enableBridgeToPerm`
+
+### Permission Changes
+
+- Split `enableNoFill` into:
+  - `enableNoFillCertNonOwner`
+  - `enableNoFillBusinessPurpose`
+
+- Renamed:
+  - `enableComplexSigners` → `enableEntityOwnership`
+
+### Additional Changes
+
+#### `titleInformation`
+
+- Added `isRemoveTitleInsurance`
+
+#### `escrowInformation`
+
+- Removed `address`
+
+#### `collateral.collateralProperties`
+
+- Added `allocatedLoanAmount`
+
+#### `features`
+
+Added:
+
+- `isPrepaymentPremium`
+- `appraisalARV`
+- `isShtarIska`
+
+Split:
+
+- `interestReserveAmount` into:
+  - `interestReserveDollars`
+  - `interestReserveMonths`
+
+- `defaultReserveAmount` into:
+  - `defaultReserveDollars`
+  - `defaultReserveMonths`
+
+#### `features.construction`
+
+Added:
+
+- `draws`
+- `isConstructionCompletionGuaranty`
+- `constructionCompletionGuarantors`
+
+### Major Enhancements
+
+- Completed schemas for:
+  - `collateralSecurityAgreement`
+  - `equityPledgeAgreement`
+
+### Documentation Updates
+
+- Significantly revised titles and descriptions throughout the model to improve alignment with the interview experience and increase clarity.
+- Converted numerous `number` properties to `integer` where decimal values are not accepted.
