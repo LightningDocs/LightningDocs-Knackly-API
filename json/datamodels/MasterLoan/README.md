@@ -1,5 +1,111 @@
 # Data Model Schema Changelog
 
+## Version 1.3.12 — October 12, 2026
+
+### New Properties
+
+#### Top-Level
+
+- `lendersAttorney` (new object)
+
+#### `lendersAttorney`
+
+- `name`
+- `email`
+- `firm`
+
+#### `collateral`
+
+- `isLotSplit`
+- `isSpecifyReleaseprice`
+- `releasePricingType`
+
+#### `collateral.collateralProperties`
+
+- `numberOfLots`
+
+#### `loan`
+
+- `isAmortizationSchedule`
+- `isChangeLastPayment`
+- `dartULINumber`
+- `isMaturityDateBasedOnDocDate`
+
+#### `features`
+
+- `permanentPhaseInterestRate`
+
+#### `features.impounds`
+
+- `aggregateAdjustmentAmount`
+
+#### `additionalDocuments`
+
+- `assignments` (new array)
+- `isSingleMemberAffidavit`
+- `singleMemberAffidavitEntityName`
+
+#### `additionalDocuments.assignments`
+
+- `assignee`
+- `assignmentDate`
+- `assigneeName`
+- `recordingAttention`
+- `assigneeAddress`
+- `isAltRecordingAddress`
+- `altRecordingName`
+- `altRecordingAttention`
+- `altRecordingAddress`
+- `isMERSAssignee`
+- `mersNumber`
+
+#### `documentCustomization`
+
+- `customNotaryAcknowledgmentBaseState`
+- `customNotaryAcknowledgmentSignerStates` (new object)
+- `additionalProvisions` (new array)
+
+#### `documentCustomization.customNotaryAcknowledgmentSignerStates`
+
+- `individualName`
+- `signingState`
+
+#### `documentCustomization.additionalProvisions`
+
+- `category`
+- `header`
+- `provision`
+
+### Deprecated Properties
+
+#### `collateral`
+
+- `partialRelease`
+- `isScheduleOfReleasePrices`
+- `customNotaryAcknowledgmentState`
+
+#### `additionalDocuments`
+
+- `assignee`
+- `assigneeInformation`
+- `assignmentDate`
+- `isAssignmentResale`
+- `isAssigneeUsingMers`
+- `assigneeMersNumber`
+
+### Removed Properties
+
+#### `collateral`
+
+- `usesScheduleOfProperties`
+- `allocatedLoanAmount` (previously deprecated)
+
+### Other Changes
+
+- Updated various descriptions, titles, and usage notes for accuracy.
+
+---
+
 ## Version 1.3.10 — June 15, 2026
 
 ### New Permissions

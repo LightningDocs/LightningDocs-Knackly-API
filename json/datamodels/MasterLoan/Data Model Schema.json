@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "version": "1.3.10",
   "type": "object",
+  "version": "1.3.12",
   "definitions": {
     "states": {
       "enum": [
@@ -251,6 +251,7 @@
                     "owners": {
                       "type": "array",
                       "title": "Owners for Signers for Signers for Grantor",
+                      "usage": "Use of this property should be combined with enableFeatures.enableEntityOwnership == true",
                       "description": "This array is for Owners for Signers for Signers for Grantor. At this level, individuals only.",
                       "items": {
                         "type": "object",
@@ -270,6 +271,7 @@
                 "type": "array",
                 "description": "This array is for Owners for Signers for Grantor. Second-level.",
                 "title": "Owners for Signers for Grantor",
+                "usage": "Use of this property should be combined with enableFeatures.enableEntityOwnership == true",
                 "items": {
                   "type": "object",
                   "properties": {
@@ -314,7 +316,7 @@
         "complexOwners": {
           "type": "array",
           "title": "Owners for Grantor (complex)",
-          "usage": "Only relevant if enableFeatures.enableEntityOwnership == true. To use this, 'usesComplexSigners': true must also be sent as a property of each Grantor. Should be used in combination with complexSigners.",
+          "usage": "Only relevant if enableFeatures.enableEntityOwnership == true. To use this, enableFeatures.enableEntityOwnership == true must also be sent as a property of each Grantor. Should be used in combination with complexSigners.",
           "description": "A more complex interface for sending owner information for an entity. This array collects the owners for this Grantor.",
           "items": {
             "type": "object",
@@ -406,7 +408,7 @@
     "customWorkItemName": {
       "type": "string",
       "title": "Work Item Name",
-      "usage": "CONFIGURATION. Optional when enableWorkItemName == true.",
+      "usage": "CONFIGURATION. Optional when enableFeatures.enableWorkItemName == true.",
       "description": "Due to file system limitations, any slashes (/) will be replaced with hyphen (-)."
     },
     "product": {
@@ -428,13 +430,16 @@
     "isLineOfCredit": {
       "type": "boolean",
       "title": "Is this a Line of Credit?",
-      "usage": "CLIENT SPECIFIC"
+      "usage": "CLIENT SPECIFIC AND IF PROPERTY IS NOT IN SOUTH DAKOTA"
     },
     "lineOfCreditTransactionSelection": {
       "type": "string",
       "title": "Is this the first transaction or subsequent transaction?",
       "usage": "Required when isLineOfCredit == true",
-      "enum": ["First Transaction", "Subsequent Transaction"]
+      "enum": [
+        "First Transaction",
+        "Subsequent Transaction"
+      ]
     },
     "isBuildingLoanStandalone": {
       "type": "boolean",
@@ -652,10 +657,6 @@
           "title": "Enter Owners (Members/Shareholders) of Entity Borrowers & Guarantors",
           "description": "By default, the interview only asks for the signers (typically Managers and Officers) of entities for purposes of creating the loan documents. This option adds the ability to add owner information (typically Members and Shareholders) for each borrower or guarantor entity. Choosing this option will then modify the default Entity Certificate to have the owners of the entity certify the signers are authorized to sign and will be signed by all of the members versus the default option which has the signers verify they have the authority to sign the documents."
         },
-        "enableThirdPartyAffiliate": {
-          "type": "boolean",
-          "title": "Third Party Affiliate"
-        },
         "enableReviewChecklistDoc": {
           "type": "boolean",
           "title": "Automatically Produce a 'QC Review Checklist' document",
@@ -704,6 +705,11 @@
         "enableFirstPaymentDate": {
           "type": "boolean",
           "title": "Manually enter First Payment Date"
+        },
+        "enableMaturityDateBasedOnDocDate": {
+          "type": "boolean",
+          "title": "Enable calculating the Maturity Date based on the Document Date",
+          "description": "This option allows the user to select on a loan by loan basis whether the Maturity Date is calculated based on the Document Date."
         },
         "enableRemoveCognovit": {
           "type": "boolean",
@@ -768,7 +774,7 @@
         "enableAmortizationSchedule": {
           "type": "boolean",
           "title": "Enable including an amortization schedule",
-          "description": "An amortization schedule is a detailed table showing each monthly loan payment, breaking down the amount applied to principal and interest, and tracking the remaining balance over time. By enabling this permission the user can select on a loan-by-loan basis whether to include an Amortization Schedule with the loan documents under the “Additional Documents” tab."
+          "description": "An amortization schedule is a detailed table showing each monthly loan payment, breaking down the amount applied to principal and interest, and tracking the remaining balance over time. By enabling this permission the user can select on a loan-by-loan basis whether to include an Amortization Schedule with the loan documents under the “Standard Loan Terms” tab."
         },
         "enableServicerAccountNumber": {
           "type": "boolean",
@@ -789,7 +795,10 @@
           "type": "string",
           "title": "Borrower notice sent to",
           "description": "The loan documents identify the notice address for the borrower in various different documents in the set.  Most borrowers want mail sent and/or addressed to them, however, some borrowers may want notices sent to a third party, such as a custodian.  Regardless of whether mail is to be delivered to the Borrower, or a Third Party, you will need to enter the name and address to which the notices should be sent.",
-          "enum": ["Borrower", "Other"]
+          "enum": [
+            "Borrower",
+            "Other"
+          ]
         },
         "deliveryTo": {
           "type": "string",
@@ -848,6 +857,10 @@
           "title": "Will there be a maximum liability for any Guarantor?",
           "usage": "This must be true to add the max liability amount field to the individual guarantor dialog."
         },
+        "isIndividualGuaranties": {
+          "type": "boolean",
+          "title": "Create a separate guaranty for each guarantor? (by default guarantors of the same type are combined onto a single guaranty)"
+        },
         "guarantors": {
           "type": "array",
           "title": "Information for each Guarantor",
@@ -894,7 +907,11 @@
               "guarantorType": {
                 "type": "string",
                 "title": "Type of guaranty",
-                "enum": ["Full", "Limited", "Springing"]
+                "enum": [
+                  "Full",
+                  "Limited",
+                  "Springing"
+                ]
               },
               "spousalSignature": {
                 "type": "boolean",
@@ -904,7 +921,11 @@
               "addressType": {
                 "type": "string",
                 "title": "Use which address for Guarantor?",
-                "enum": ["Borrower", "Property", "Other"]
+                "enum": [
+                  "Borrower",
+                  "Property",
+                  "Other"
+                ]
               },
               "address": {
                 "usage": "Only needed if addressType == 'Other'",
@@ -999,6 +1020,7 @@
                           "owners": {
                             "type": "array",
                             "title": "Owners for Signers for Signers for Guarantor",
+                            "usage": "Use of this property should be combined with enableFeatures.enableEntityOwnership == true",
                             "items": {
                               "type": "object",
                               "properties": {
@@ -1015,6 +1037,7 @@
                     "owners": {
                       "type": "array",
                       "title": "Owners for Signers for Guarantor",
+                      "usage": "Use of this property should be combined with enableFeatures.enableEntityOwnership == true",
                       "items": {
                         "type": "object",
                         "properties": {
@@ -1198,7 +1221,10 @@
         "noticeTo": {
           "type": "string",
           "title": "Will notice be sent to the Lender or a Third Party on behalf of the Lender?",
-          "enum": ["Lender", "Third Party"]
+          "enum": [
+            "Lender",
+            "Third Party"
+          ]
         },
         "noticeRecipient": {
           "type": "string",
@@ -1219,11 +1245,13 @@
         },
         "isCustomOriginalsReturnAddress": {
           "type": "boolean",
-          "title": "Deliver original signed loan documents (except the recorded documents) to a different address than the Notice address provided above?"
+          "title": "Deliver original signed loan documents (except the recorded documents) to a different address than the Notice address provided above?",
+          "usage": "Use of this property should be combined with enableFeatures.enableCustomReturnAddress == true"
         },
         "isCustomRecordedReturnAddress": {
           "type": "boolean",
-          "title": "Deliver recorded documents to a different address than the Notice address provided above?"
+          "title": "Deliver recorded documents to a different address than the Notice address provided above?",
+          "usage": "Use of this property should be combined with enableFeatures.enableCustomReturnAddress == true"
         },
         "originalsReturnAddress": {
           "type": "string",
@@ -1280,7 +1308,7 @@
     "isRemoveACH": {
       "type": "boolean",
       "title": "Remove the standard ACH from the document set? (This will remove the ACH itself, but all references to it will remain.)",
-      "usage": "Only used if isRemoveACH == true."
+      "usage": "Only used if isACH == true."
     },
     "bankName_ACH": {
       "type": "string",
@@ -1304,17 +1332,22 @@
             "BSI",
             "Citrus Servicing LLC",
             "CJ Investment Services",
-            "Del Toro",
+            "Cornerstone",
+            "Del Toro ",
             "Fay Servicing, LLC",
             "FCI",
-            "MRK",
+            "MRK Management Services",
             "Note Servicing Center",
-            "PLM",
-            "Selene",
-            "Shellpoint Mortgage Servicing",
+            "Petra Loan Servicing Corp",
+            "PLM Lender Services",
+            "RFMSC",
             "Select Portfolio Servicing",
+            "Selene",
+            "Servicing Pros Inc.",
+            "Shellpoint Mortgage Servicing",
             "Statebridge",
             "Superior Loan Servicing",
+            "Tandem Servicing Company",
             "Other"
           ]
         },
@@ -1332,7 +1365,7 @@
     "servicerAccountNumber": {
       "type": "string",
       "title": "Loan Servicer Account Number",
-      "usage": "Optional in First Payment Letter"
+      "usage": "Optional in First Payment Letter. Use of this property should be combined with enableFeatures.enableServicerAccountNumber == true"
     },
     "isBroker": {
       "type": "boolean",
@@ -1409,7 +1442,10 @@
         "altaVersion": {
           "type": "string",
           "title": "Select version of ALTA policy",
-          "enum": ["2006", "2021"],
+          "enum": [
+            "2006",
+            "2021"
+          ],
           "usage": "CLIENT SPECIFIC"
         },
         "isReduceCoverage": {
@@ -1420,6 +1456,7 @@
         "isProforma": {
           "type": "boolean",
           "title": "Attach Proforma Policy Exhibit?",
+          "usage": "Use of this property should be combined with enableFeatures.enableProFormaPolicy == true",
           "description": "The standard loan interview asks users to identify a specific title commitment and identify specific exceptions to be deleted before the title policy is issued to the lender (i.e. Delete items 1-4, 5, 6), along with specific endorsements and form of coverage. Some lenders have already negotiated the final form of title policy with the title company in advance of loan closing, and the title company provides a Pro Forma to them which identifies the final form of title policy the lender will receive after loan closing.  Using this feature will require the lender to attach the Pro Forma to the lender's instructions to the closing agent instead of identifying specific title exceptions that must be removed."
         },
         "exceptionItems": {
@@ -1479,7 +1516,11 @@
         "addressType": {
           "type": "string",
           "title": "Address of Preparer",
-          "enum": ["Lender", "Broker", "Other"]
+          "enum": [
+            "Lender",
+            "Broker",
+            "Other"
+          ]
         },
         "address": {
           "usage": "Only needed if addressType == 'Other'",
@@ -1507,6 +1548,26 @@
         }
       }
     },
+    "lendersAttorney": {
+      "type": "object",
+      "title": "Lender's Attorney",
+      "description": "This object contains the attributes that make up the contact information for the Lender's Attorney.",
+      "usage": "CLIENT SPECIFIC",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name"
+        },
+        "email": {
+          "type": "string",
+          "title": "Email Address"
+        },
+        "firm": {
+          "type": "string",
+          "title": "Law Firm"
+        }
+      }
+    },
     "collateral": {
       "type": "object",
       "title": "Property Information",
@@ -1521,23 +1582,44 @@
           "type": "boolean",
           "title": "Allow for partial release of collateral?"
         },
+        "isLotSplit": {
+          "type": "boolean",
+          "title": "Lot Split",
+          "usage": "CLIENT SPECIFIC"
+        },
+        "isSpecifyReleasePrice": {
+          "type": "boolean",
+          "title": "Specify Release Pricing"
+        },
+        "releasePricingType": {
+          "type": "string",
+          "title": "Select the release price method.",
+          "enum": [
+            "Release Price",
+            "Allocated Loan Amount",
+            "Schedule of Release Prices",
+            "Fractional Pricing"
+          ],
+          "usage": "Used when isPartialRelease == true && isSpecifiyReleasePrice == true. 'Fractional Pricing' option is not available by default, but can be enabled upon request."
+        },
         "partialRelease": {
           "type": "string",
           "title": "Can the Borrower release any Property securing the Loan without paying off the entire Loan?",
-          "enum": ["Release Price", "Net Proceeds"],
-          "usage": "Only needed if isPartialRelease == true",
-          "description": "When 'Release Price' is a used releasePrice must be provided for each element in collateralProperties"
+          "enum": [
+            "Release Price",
+            "Net Proceeds"
+          ],
+          "usage": "DEPRECATED"
         },
         "releasePriceMultiplier": {
           "type": "integer",
           "title": "What multiple of the Allocated Loan Amount is each Release Price? (percentage, e.g. 120)",
-          "usage": "CLIENT SPECIFIC. Defaults to 120 if not answered."
+          "usage": "Only used when releasePricingType == 'Allocated Loan Amount'. Defaults to 120 if not answered."
         },
         "isScheduleOfReleasePrices": {
           "type": "boolean",
           "title": "User will attach a separate schedule of release prices to Loan Agreement?",
-          "usage": "Only used when isPartialRelease == true and partialRelease == 'Release Price'",
-          "description": "This will allow users to attach a custom schedule of release prices to the Loan Agreement instead of a table appearing in the loan documents. This is helpful in instances where there are a significant number of properties or in instances where a single parcel will be split into multiple parcels."
+          "usage": "DEPRECATED"
         },
         "releasePriceSchedule:": {
           "type": "string",
@@ -1570,12 +1652,13 @@
         "isConfessionOfJudgment": {
           "type": "boolean",
           "title": "Remove Confession of Judgment Provisions?",
-          "usage": "CLIENT SPECIFIC",
+          "usage": "CLIENT SPECIFIC. Use of this property should be combined with enableFeatures.enableRemoveCognovit == true",
           "description": "The default loan documents will automatically include Confession of Judgment Provisions if the Property State and the Governing Law State match and are any of: Delaware, Illinois, Maryland, Ohio, Pennsylvania, or Virginia.  By selecting this feature you will remove the Confession of Judgment Provisions in the loan documents even if the Property State and Governing Law state match and are in the states identified above."
         },
         "isFixtureFiling": {
           "type": "boolean",
           "title": "Include Fixture Filing with each Security Instrument?",
+          "usage": "Use of this property should be combined with enableFeatures.enableUCC == true",
           "description": "The security instruments automatically include fixture filing language.  All state except for Louisiana permit the Deed of Trust or Mortgage to include fixture filing language without the need to separately record a fixture filing.  In Louisiana the system will automatically generate a UCC to be recorded along with the mortgage. This option should only be used when you want to separately produce a UCC to be recorded along with the Mortgage or Deed of Trust which simply re-states the Fixture filing section of the security instrument in the UCC filing. It is generally not recommended to take this approach."
         },
         "isRemoveReplacementPersonalty": {
@@ -1597,7 +1680,7 @@
         "customNotaryAcknowledgmentState": {
           "type": "string",
           "title": "Select which state's notary acknowledgments to produce.",
-          "usage": "CLIENT SPECIFIC",
+          "usage": "DEPRECATED",
           "$ref": "#/definitions/states"
         },
         "collateralProperties": {
@@ -1631,18 +1714,27 @@
               "propertyType": {
                 "type": "string",
                 "title": "Property Type",
-                "enum": ["Residential", "Multi-Family", "Commercial", "Vacant"],
+                "enum": [
+                  "Residential",
+                  "Multi-Family",
+                  "Commercial",
+                  "Vacant"
+                ],
                 "usage": "Only needed if the collateral property is in the state of Maryland, New York, Oregon, Pennsylvania, or Kentucky. (Some users have client-specific provisions that require it regardless of property state.) The 'Residential' option selects '1-6 Single Family Resident' in New York, and '1-4 Single Family Residence' in every other state. The 'Multi-Family' option selects '7+ Multi-Family Property' in New York, and '5+ Multi-Family Property' in every other state."
               },
               "rentalProperty": {
                 "type": "string",
                 "title": "Is this a residential rental property?",
-                "enum": ["Yes", "No"],
+                "enum": [
+                  "Yes",
+                  "No"
+                ],
                 "usage": "Only needed if state == 'Utah' While this property looks like it should be a boolean, it is set up as a string to prevent the system from automatically concluding that the collateral property IS NOT a rental property when no answer is provided. That would cause incorrect information to be entered into the security instrument."
               },
               "isLeaseholdMortgage": {
                 "type": "boolean",
                 "title": "Is Borrower leasing the Property instead of a Fee Ownership?",
+                "usage": "Use of this property should be combined with enableFeatures.enableLeaseholdMortgage == true",
                 "description": "Select 'Yes' if this property is leased by the borrower rather than owned, meaning the mortgage will be a 'Leasehold Mortgage' - that is, the mortgage secures the borrower's rights under their lease and not the ownership of the property itself.  This is more often used in commercial real estate, or for residential property in certain limited geographic locations where leaseholds are more common.  This selection will add additional language to the loan documents and produce a recommendation for two additional documents: a Ground Lease Estoppel Certificate and a Leasehold Mortgage Agreement."
               },
               "leaseholdLessor": {
@@ -1654,14 +1746,9 @@
                 "type": "boolean",
                 "title": "Is the Property the Borrower's primary residence?"
               },
-              "usesScheduleOfProperties": {
-                "type": "boolean",
-                "title": "Uses Schedule of Properties",
-                "usage": "This property is ignored by the interpreter. It can optionally be sent as 'true' to prompt validation functions using the final validation schema to check that the correct information was sent for each collateral property. (Less information is needed for each repetition of 'collateralProperties' when usesScheduleOfProperties == true)"
-              },
               "releasePrice": {
                 "type": "number",
-                "title": "Minimum Release Price",
+                "title": "Minimum Release Price/Allocated Loan Amount",
                 "usage": "Only needed if collateral.isPartialRelease == true && collateral.partialRelease == 'Release Price' && collateral.isScheduleofReleasePrices != true"
               },
               "releasePriceBuildingLoan": {
@@ -1669,9 +1756,10 @@
                 "title": "Minimum Release Price",
                 "usage": "This is only used with the NYBuildingLoan app. Only needed if collateral.isPartialRelease == true && collateral.partialRelease == 'Release Price'"
               },
-              "allocatedLoanAmount": {
-                "type": "number",
-                "usage": "DEPRECATED: Use releasePrice"
+              "numberOfLots": {
+                "type": "integer",
+                "title": "Number of lots, if applicable",
+                "usage": "Used with Lot Split"
               },
               "isIncludePUD": {
                 "type": "boolean",
@@ -1708,7 +1796,7 @@
               "isTenancyInCommonAgreement": {
                 "type": "boolean",
                 "title": "Are the properties owned under a Tenancy in Common Agreement?",
-                "usage": "Only used when enableTenancyInCommonAgreement == true && there is more than one property owner.",
+                "usage": "Only used when enableFeatures.enableTenancyInCommonAgreement == true && there is more than one property owner.",
                 "description": "This feature will add language to the Security Instrument that subordinates the rights and remedies found in the owners (co-tenant's) Tenant In Common Agreement to the rights of the Lender under the Loan Documents, and provides for additional promises of each co-tenant for the benefit of Lender."
               },
               "tenancyInCommonAgreementDate": {
@@ -1783,10 +1871,10 @@
                 }
               },
               "manualVesting": {
-                  "type": "string",
-                  "title": "Manually enter vesting here. If left blank, it will default to the automatically generated vesting based on the property owners",
-                  "usage": "CLIENT SPECIFIC",
-                  "description": "Instead of using the automatic vesting that Lightning Docs creates as a combination of the various property owners and their own vestings, manually give a single vesting that will apply to the entire property as a whole."
+                "type": "string",
+                "title": "Manually enter vesting here. If left blank, it will default to the automatically generated vesting based on the property owners",
+                "usage": "CLIENT SPECIFIC",
+                "description": "Instead of using the automatic vesting that Lightning Docs creates as a combination of the various property owners and their own vestings, manually give a single vesting that will apply to the entire property as a whole."
               }
             }
           }
@@ -1837,8 +1925,13 @@
         },
         "calculation": {
           "type": "string",
-          "title": "Interest Calculation Type",
-          "enum": ["30/360", "360/Actual", "365/Actual"],
+          "title": "Monthly Payment Calculation Method",
+          "usage": "Use of this property should be combined with enableFeatures.enableInterestCalcType == true",
+          "enum": [
+            "30/360",
+            "360/Actual",
+            "365/Actual"
+          ],
           "default": "30/360",
           "description": "Normally monthly payments are established by creating a fictitious year of 360 days with even 30-day months. The payments are always the same each month even though there are a different number of actual days in each month. This is considered the standard method to calculate monthly payments. DSCR loans should always use 30/360. Some bridge lenders prefer to charge a daily interest rate and they can do so in one of two ways: 360/Actual: Instead of dividing the year into 30-day months, this method takes the yearly payment divided by 360 days and charges the daily amount each day so that the payments in a 30-day month are different than a 31-day month. Doing so will charge the borrower 5 extra days of interest each year. OR 365/Actual: In this method, the annual payment is divided by 365 days and similar to 360/Actual, the monthly payments will change based on how many calendar days are in each month. The actual amount paid over the year is the same as 30/360."
         },
@@ -1931,7 +2024,7 @@
         "isInterestStep": {
           "type": "boolean",
           "title": "Interest Rate Step",
-          "usage": "Should not be used with isVariable.",
+          "usage": "Should not be used with isVariable. Use of this property should be combined with enableFeatures.enableInterestRateStep == true",
           "description": "Most loans have a fixed interest rate during the full term of the loan. If you would like to increase the interest rate after a set time period: select 'Yes' to this feature, then enter the interest rate and the duration (in months) for which interest will accrue at said rate."
         },
         "stepInformation": {
@@ -1954,20 +2047,30 @@
           }
         },
         "isInterestRateReduction": {
-            "type": "boolean",
-            "title": "Include an interest rate reduction?",
-            "description": "CLIENT SPECIFIC"
+          "type": "boolean",
+          "title": "Include an interest rate reduction?",
+          "description": "CLIENT SPECIFIC"
         },
         "interestRateReduction": {
-            "type": "number",
-            "title": "Interest Rate Reduction Amount (%)",
-            "description": "CLIENT SPECIFIC.",
-            "usage": "Only needed if isInterestRateReduction == true."
+          "type": "number",
+          "title": "Interest Rate Reduction Amount (%)",
+          "description": "CLIENT SPECIFIC.",
+          "usage": "Only needed if isInterestRateReduction == true."
         },
         "isNonDutchAll": {
           "type": "boolean",
           "title": "Does interest accrue on all reserve funds only when they are advanced to the borrower? (non-dutch interest)",
-          "usage": "If this is answered true, loan.features.construction.isNonDutch does not need to also be answered true."
+          "usage": "If this is answered true, loan.features.construction.isNonDutch does not need to also be answered true. Use of this property should be combined with enableFeatures.enableNonDutchAll == true"
+        },
+        "isAmortizationSchedule": {
+          "type": "boolean",
+          "title": "Include an Amortization Schedule?",
+          "usage": "Use of this property should be combined with enableFeatures.enableAmortizationSchedule == true. Not used if any of the following are true: isNonDutchAll == true or features.construction.isNonDutch == true; isMaturityDateBasedOnDocDate == true or a maturityDate is provided; the loan is interest-only for its entire term (isInterestOnly == true && ioPeriod == term); isAdvancePayment == true; isLineOfCredit == true or features.isCreditLine == true; isInterestStep == true."
+        },
+        "isChangeLastPayment": {
+          "type": "boolean",
+          "title": "Change the Last Payment on the Amortization Schedule?",
+          "usage": "Only used if isAmortizationSchedule == true and the loan does not have a balloon payment (i.e., amortization, plus ioPeriod when isInterestOnly == true, does not exceed term)."
         },
         "isMERS": {
           "type": "boolean",
@@ -1982,13 +2085,19 @@
         "isDARTLanguage": {
           "type": "boolean",
           "title": "Insert DART language in Loan Documents?",
+          "usage": "Use of this property should be combined with enableFeatures.enableDARTLanguage == true",
           "description": "DART refers to DART Collateral Manager LLC, a company which acts as a nominee for the lender. DART requires a variety of changes to the loan documents to comply with DART requirements. Selecting this option will apply those changes automatically. The lender must still submit the final documents to DART after loan closing."
+        },
+        "dartULINumber": {
+          "type": "string",
+          "title": "Enter DART Universal Loan Identifier (ULI) Number",
+          "usage": "Only needed if isDARTLanguage == true."
         },
         "firstPaymentDate": {
           "type": "string",
           "format": "date",
           "title": "First Payment Date",
-          "usage": "Optional. Used to override the automatic calculation of the First Payment Date.",
+          "usage": "Optional. Used to override the automatic calculation of the First Payment Date. Use of this property should be combined with enableFeatures.enableFirstPaymentDate == true",
           "description": "If a date is selected other than the first day of the second month following closing, the Lender's Closing Instructions will instruct escrow or title to discuss with your closing contact how per diem interest is to be handled. For example:  Ordinarily, if the loan closes on January 10, 2020 the first payment date would be March 1, 2020, and per diem interest would be collected from January 10 to January 31."
         },
         "maturityDate": {
@@ -1996,6 +2105,11 @@
           "format": "date",
           "title": "Maturity Date",
           "usage": "Optional. Used to override the automatic calculation of the Maturity Date."
+        },
+        "isMaturityDateBasedOnDocDate": {
+          "type": "boolean",
+          "title": "Calculate the Maturity Date based on the Document Date?",
+          "usage": "Use of this property should be combined with enableFeatures.enableMaturityDateBasedOnDocDate == true || CLIENT SPECIFIC"
         },
         "isAdvancePayment": {
           "type": "boolean",
@@ -2037,6 +2151,7 @@
         "isCreditLine": {
           "type": "boolean",
           "title": "Is this a line of credit?",
+          "usage": "Use of this property should be combined with enableFeatures.enableLineOfCredit == true",
           "description": "The Line of Credit feature allows you to make periodic advances of loan proceeds to the borrower.  If you select 'revolving' this will enable the borrower to repay advances that are made and then re-borrow them later. Depending on which state the property securing the loan is in, you will be able to choose among the following three variants:  Standard, Mandatory, and Optional.  'Optional' provides the most flexibility to the lender in determining when or if to make an advance to the borrower.  All advances are made at lender's discretion. 'Standard' provides a hybrid approach, giving the lender flexibility in using discretion in approving certain conditions the borrower must meet in order to receive an advance.  Once the conditions are approved, however, the advance must be made in most circumstances.  'Mandatory' provides that as long as the conditions for advances are met, with little to no discretion from the lender, the advance must be made in most circumstances. Some states make a distinction between advances made at lender's discretion and those without -- affecting the priority of the lien as to each advance.  In these states, the Mandatory variant is recommended.  The states which make this distinction are: Idaho, Illinois, Massachusetts, Minnesota, Nebraska, New Jersey, Ohio, Oklahoma, Oregon, Pennsylvania, Rhode Island, Tennessee, Utah, Vermont, West Virginia, Wisconsin, Wyoming, and the District of Columbia."
         },
         "creditLineInformation": {
@@ -2113,7 +2228,11 @@
         "prepaymentLockoutCalculation": {
           "type": "string",
           "title": "Penalty is Calculated From",
-          "enum": ["Dollar Amount", "Months", "Prepaid"],
+          "enum": [
+            "Dollar Amount",
+            "Months",
+            "Prepaid"
+          ],
           "usage": "Only needed if prepaymentPremium == 'Lockout'."
         },
         "prepaymentLockoutAmount": {
@@ -2172,7 +2291,7 @@
         "isBridgeToPerm": {
           "type": "boolean",
           "title": "Bridge to Perm Loan?",
-          "usage": "Must be used in combination with loan.isInterestOnly == true.",
+          "usage": "Must be used in combination with loan.isInterestOnly == true. Use of this property should be combined with enableFeatures.enableBridgeToPerm == true",
           "description": "Normally a borrower would first take out a Bridge/Fix and Flip/Construction loan, then stabilize the property and complete any construction.  Once the property is stabilized, typically with a tenant in place, that same borrower typically seeks long term lower cost financing usually through the form of a DSCR loan.  This feature combines both loan features into a single loan. An initial bridge loan which is interest-only, and typically contains a construction period, which then automatically converts to a 30 year perm loan."
         },
         "bridgeToPerm": {
@@ -2187,6 +2306,11 @@
             "maximumAdvance": {
               "type": "number",
               "title": "Maximum Total Advance (%)"
+            },
+            "permanentPhaseInterestRate": {
+              "type": "number",
+              "title": "Permanent Phase Interest Rate (%)",
+              "usage": "CLIENT SPECIFIC"
             }
           }
         },
@@ -2210,7 +2334,11 @@
             "constructionType": {
               "type": "string",
               "title": "Type of Construction Reserve Language to be used",
-              "enum": ["Simple", "Standard", "Extensive"]
+              "enum": [
+                "Simple",
+                "Standard",
+                "Extensive"
+              ]
             },
             "reserveAmount": {
               "type": "number",
@@ -2277,9 +2405,9 @@
               "description": "Allows the lender to take a collateral assignment of all permits and construction agreements and creates a recordable document that is separate from the Security Instrument."
             },
             "isAssignmentOfPermitsAll": {
-                "type": "boolean",
-                "title": "Make a single Assignment of Permits document referencing all properties on this loan?",
-                "usage": "Optional. Only used if isAssignmentOfPermits == true."
+              "type": "boolean",
+              "title": "Make a single Assignment of Permits document referencing all properties on this loan?",
+              "usage": "Optional. Only used if isAssignmentOfPermits == true."
             },
             "assignmentOfPermitsProperties": {
               "type": "array",
@@ -2359,6 +2487,7 @@
             "isConstructionCompletionGuaranty": {
               "type": "boolean",
               "title": "Include Third Party Construction Completion Guaranty?",
+              "usage": "Use of this property should be combined with enableFeatures.enableCompletionGuaranty == true",
               "description": "If the loan includes a construction holdback and the user includes a guaranty as part of the interview, construction completion requirements automatically populate in the personal guaranty for that guarantor.  This option is only to be used when a THIRD PARTY to the transaction (i.e. someone other than any guarantors) are also obligated to complete construction at the property.  If selected, an additional stand-alone guaranty of completion will be produced for that third party."
             },
             "constructionCompletionGuarantors": {
@@ -2418,7 +2547,11 @@
             "feeType": {
               "type": "string",
               "title": "Extension Fee Type",
-              "enum": ["None", "Percent", "Dollar"]
+              "enum": [
+                "None",
+                "Percent",
+                "Dollar"
+              ]
             },
             "feeAmount": {
               "type": "number",
@@ -2451,7 +2584,11 @@
             "feeType": {
               "type": "string",
               "title": "Extension Fee Type",
-              "enum": ["None", "Percent", "Dollar"]
+              "enum": [
+                "None",
+                "Percent",
+                "Dollar"
+              ]
             },
             "feeAmount": {
               "type": "number",
@@ -2482,6 +2619,7 @@
         "isTerminationFee": {
           "type": "boolean",
           "title": "Termination Fee?",
+          "usage": "Use of this property should be combined with enableFeatures.enableTerminationFee == true",
           "description": "Selecting 'Yes' will require borrower to pay a fee upon the earlier of (i) the Maturity Date; (ii) Borrower's prepayment of the loan in full prior to Maturity; (iii) a transfer of Borrower interest in the real property; or (iv) an Event of Default."
         },
         "terminationFee": {
@@ -2542,8 +2680,12 @@
         "deferredBrokerFee": {
           "type": "string",
           "title": "Deferred Broker Fees?",
-          "enum": ["None", "Dollar", "Percent"],
-          "usage": "Optional; sending no answer is functionally equivalent to answering 'None'.",
+          "enum": [
+            "None",
+            "Dollar",
+            "Percent"
+          ],
+          "usage": "Optional; sending no answer is functionally equivalent to answering 'None'. Use of this property should be combined with enableFeatures.enableDeferredBrokerFees == true",
           "description": "Selecting 'Yes' creates language that specifies the fee owed to the identified broker will be deferred to the earlier of the maturity date, the release of the property, or an event of default instead of being paid through the loan proceeds at time of loan origination."
         },
         "deferredBrokerFeeAmount": {
@@ -2554,8 +2696,12 @@
         "deferredOriginationFee": {
           "type": "string",
           "title": "Are you deferring any origination fees??",
-          "enum": ["None", "Dollar", "Percent"],
-          "usage": "Optional; sending no answer is functionally equivalent to answering 'None'.",
+          "enum": [
+            "None",
+            "Dollar",
+            "Percent"
+          ],
+          "usage": "Optional; sending no answer is functionally equivalent to answering 'None'. Use of this property should be combined with enableFeatures.enableDeferredOriginationFees == true",
           "description": "Selecting 'Yes' creates language that specifies the origination fee owed to lender will be deferred to the earlier of the maturity date, the release of the property, or an event of default instead of being paid through the loan proceeds at time of loan origination."
         },
         "deferredOriginationFeeAmount": {
@@ -2586,10 +2732,11 @@
         "isDSCR": {
           "type": "boolean",
           "title": "Include a Debt Service Coverage Ratio Requirement and Event of Default?",
+          "usage": "Use of this property should be combined with enableFeatures.enableDSCR == true",
           "description": "For rental properties or other cash flowing real estate, certain mortgage lenders require the borrower to maintain a minimum Debt Service Coverage Ratio for the life of the loan and the failure to maintain this ratio is an Event of Default under the Loan Documents. If you Select Yes, please state the ratio that the borrower must exceed (e.g 1.15). For example a DSCR Ratio of 1.10 would mean that if you divided the net operating income of the property by the debt service (principal/interest payments) for that time period, the number must exceed 1.10 or the borrower would be in default under the loan documents."
         },
         "ratio": {
-          "type": "integer",
+          "type": "number",
           "title": "Ratio",
           "usage": "Only used if isDSCR == true."
         },
@@ -2607,6 +2754,7 @@
         "isCannabisLoan": {
           "type": "boolean",
           "title": "Cannabis Loan?",
+          "usage": "Use of this property should be combined with enableFeatures.enableCannabis == true",
           "description": "Select 'Yes' to add language to the loan agreement which requires borrower to promise not to operate and/or allow its tenants to operate a cannabis related business at the property until it and/or any tenants have all applicable licenses or permits necessary to operate the cannabis related business at the property. The loan agreement will also permit the borrower and/or its tenants to operate a cannabis related business at the property so long as it is only in violation of federal law and not state law. This also creates a new event of default for failure to maintain these licenses or permits."
         },
         "cannabisAssignmentOfPermitsProperties": {
@@ -2621,6 +2769,7 @@
         "isSBA": {
           "type": "boolean",
           "title": "SBA Loan?",
+          "usage": "Use of this property should be combined with enableFeatures.enableSBALoan == true",
           "description": "This option is used when the loan is made through or in conjunction with the U.S. Small Business Administration.  Additional language and documents are added.  You should not use this option without discussing with the Lightning Docs team."
         },
         "sbaDate": {
@@ -2637,6 +2786,7 @@
         "isSPE": {
           "type": "boolean",
           "title": "Require Borrower to be a Special Purpose Entity?",
+          "usage": "Use of this property should be combined with enableFeatures.enableSPE == true",
           "description": "Using this option requires the borrower to be a Special Purpose Entity and will include certain provisions to the loan documents limiting the borrower's ability to take certain actions such as guaranty other obligations or take on new loans.  When required in the loan documents, this option adds additional events of default if borrower were to make any changes to the entity structure, or enter into certain other contracts.  If the user further selects a 'Permit Borrower to use Recycled SPE' then additional language is added as borrower representations about the existence and financial and legal status of the entity."
         },
         "isRecycledSPE": {
@@ -2647,18 +2797,24 @@
         "isAffiliateLoan": {
           "type": "boolean",
           "title": "Affiliate Loan",
+          "usage": "Use of this property should be combined with enableFeatures.enableAffiliate == true",
           "description": "This option is reserved for when the lender and borrower are affiliates of one another.  Selecting this feature will remove instructions to obtain a title policy and all other loan documents (including personal guaranties) other than the Loan Agreement, Note, and Mortgage."
         },
         "isLockbox": {
           "type": "boolean",
           "title": "Rental Income Lockbox?",
+          "usage": "Use of this property should be combined with enableFeatures.enableLockbox == true",
           "description": "Selecting 'Yes' will create a requirement for a Rental Income Lockbox account in which the rent received by the borrower as the landlord of the property are deposited into an account mutually controlled by the borrower and the lender. This will require additional documentation and coordination with the chosen bank.  There are 3 further options:  Hard Lockbox, Soft Lockbox, and Springing Lockbox.  **Hard Lockbox** means it must be set up immediately after closing and rent will be deposited beginning on the date chosen.  **Soft Lockbox** means it must be set up immediately after closing, but rent will not be deposited until an event of default.  **Springing Lockbox** means both the setup and the rent collection will not occur until an event of default."
         },
         "lockboxType": {
           "type": "string",
           "title": "Rental Income Lockbox Type",
           "usage": "Only needed if isLockbox == true.",
-          "enum": ["Hard", "Soft", "Springing"]
+          "enum": [
+            "Hard",
+            "Soft",
+            "Springing"
+          ]
         },
         "lockboxBank": {
           "type": "string",
@@ -2695,27 +2851,27 @@
             "initialCityTax": {
               "type": "number",
               "title": "Initial City Tax Escrow Amount",
-              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+              "usage": "Only used if enableFeatures.enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
             },
             "initialCountyTax": {
               "type": "number",
               "title": "Initial County Tax Escrow Amount",
-              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+              "usage": "Only used if enableFeatures.enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
             },
             "initialSchoolTax": {
               "type": "number",
               "title": "Initial School Tax Escrow Amount",
-              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."  
+              "usage": "Only used if enableFeatures.enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
             },
             "initialTownTax": {
               "type": "number",
               "title": "Initial Town Tax Escrow Amount",
-              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+              "usage": "Only used if enableFeatures.enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
             },
             "initialVillageTax": {
               "type": "number",
               "title": "Initial Village Tax Escrow Amount",
-              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0." 
+              "usage": "Only used if enableFeatures.enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
             },
             "monthlyTax": {
               "type": "number",
@@ -2736,34 +2892,43 @@
             "monthlyCityTax": {
               "type": "number",
               "title": "Monthly City Tax Impound Amount",
-              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+              "usage": "Only used if enableFeatures.enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
             },
             "monthlyCountyTax": {
               "type": "number",
               "title": "Monthly County Tax Impound Amount",
-              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+              "usage": "Only used if enableFeatures.enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
             },
             "monthlySchoolTax": {
               "type": "number",
               "title": "Monthly School Tax Impound Amount",
-              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."  
+              "usage": "Only used if enableFeatures.enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
             },
             "monthlyTownTax": {
               "type": "number",
               "title": "Monthly Town Tax Impound Amount",
-              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+              "usage": "Only used if enableFeatures.enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
             },
             "monthlyVillageTax": {
               "type": "number",
               "title": "Monthly Village Tax Impound Amount",
-              "usage": "Only used if enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0." 
+              "usage": "Only used if enableFeatures.enableAdditionalImpoundsCityCountyEtc == true and this property is gt 0."
+            },
+            "aggregateAdjustmentAmount": {
+              "type": "number",
+              "title": "Aggregate Adjustment Amount",
+              "usage": "CLIENT SPECIFIC"
             }
           }
         },
         "interestReserve": {
           "type": "string",
           "title": "Debt Service Reserve (Interest Reserve)?",
-          "enum": ["None", "Dollar Amount", "Monthly Payments"],
+          "enum": [
+            "None",
+            "Dollar Amount",
+            "Monthly Payments"
+          ],
           "usage": "Optional; sending no answer is functionally equivalent to answering 'None'.",
           "description": "Some lenders prefer to holdback either a few months of interest or a specific dollar amount of interest to be used to pay the monthly interest only payments. This is most commonly used when the property has no cash flow such as with a construction loan. Instead of the borrower making monthly payments to the lender, the Debt Service Reserve will be used to make monthly payments until the funds are depleted."
         },
@@ -2791,6 +2956,7 @@
         "isTaxReserve": {
           "type": "boolean",
           "title": "Property Tax Reserve?",
+          "usage": "Use of this property should be combined with enableFeatures.enablePropertyTaxReserve == true",
           "description": "The lender will withhold funds from the loan proceeds in the amount entered to be used to pay property taxes through the **Maturity Date** of the loan. The Borrrower is required to pay property taxes first and can then seek these funds to be released from the loan servicer."
         },
         "taxReserve": {
@@ -2801,6 +2967,7 @@
         "isPropertyInsuranceReserve": {
           "type": "boolean",
           "title": "Property Insurance Reserve",
+          "usage": "Use of this property should be combined with enableFeatures.enablePropertyInsuranceReserve == true",
           "description": "The lender will withhold funds from the loan proceeds in the amount entered to be used to pay property insurance through the **Maturity Date** of the loan. The Borrrower is required to pay property insurance first and can then seek these funds to be released from the loan servicer."
         },
         "propertyInsuranceReserve": {
@@ -2811,6 +2978,7 @@
         "isCapExReserve": {
           "type": "boolean",
           "title": "Capital Expenditure Reserve",
+          "usage": "Use of this property should be combined with enableFeatures.enableCapExReserve == true",
           "description": "A Capital Expenditure Reserve (aka CapEx) is typically used for multifamily and/or commercial real estate loans. It's money set aside specifically to pay for things like buying new equipment or making major repairs or improvements to the property. Lenders sometimes require borrowers to create and fund a CapEx reserve as a way to ensure that the property stays in good shape and continues to be a good investment. If this option is selected, a borrower may request funds once per month from the borrower for these purposes."
         },
         "capExReserve": {
@@ -2821,6 +2989,7 @@
         "isAppraisalReserve": {
           "type": "boolean",
           "title": "Appraisal Reserve",
+          "usage": "Use of this property should be combined with enableFeatures.enableAppraisalReserve == true",
           "description": "This is used if the lender is relying on an After Repair Value (ARV), and an appraisal will not be completed prior to close. The reserve funds will be released to the borrower assuming the borrower has obtained an appraisal showing the minimum ARV meets or exceeds the amount determined by the user.  If not, Lender may retain the portion of the reserve necessary to keep the ARV ratio below 70%."
         },
         "appraisalReserve": {
@@ -2836,8 +3005,12 @@
         "defaultReserve": {
           "type": "string",
           "title": "Default Reserve?",
-          "enum": ["None", "Amount", "Months"],
-          "usage": "Optional; sending no answer is functionally equivalent to answering 'None'.",
+          "enum": [
+            "None",
+            "Amount",
+            "Months"
+          ],
+          "usage": "Optional; sending no answer is functionally equivalent to answering 'None'. Use of this property should be combined with enableFeatures.enableDefaultReserve == true",
           "description": "Selecting 'Yes' will add language to the loan documents so that in the event that your borrower defaults on the loan, the lender has the right to use the reserved funds to cover the costs of a) making required interest payments, b) making protective advances, or c) paying down the principal amount. If the lender uses or exhausts the funds, the lender can demand that the borrower replenish the Default Reserve. If they fail to replenish the default reserve, it is considered an additional event of default."
         },
         "defaultReserveDollars": {
@@ -2853,6 +3026,7 @@
         "isOccupancyReserve": {
           "type": "boolean",
           "title": "Occupancy Reserve?",
+          "usage": "Use of this property should be combined with enableFeatures.enableOccupancyReserve == true",
           "description": "If the borrower intends to vacate tenants from the collateral property in order to add value to said property, the lender can withhold funds from the loan proceeds at the time of funding. If the tenants vacate the property, and surrender possession of the property back to the owner, prior to the date entered by the user, these funds will be delivered to the borrower."
         },
         "occupancyReserveAmount": {
@@ -2869,6 +3043,7 @@
         "isGeneralReserve": {
           "type": "boolean",
           "title": "Lender General Reserve?",
+          "usage": "Use of this property should be combined with enableFeatures.enableLenderReserve == true",
           "description": "Using this feature will insert the following language into Section 2 of the Loan Agreement:  Out of the loan proceeds, Lender shall withhold the sum of [AMOUNT] Dollars ($00.00) as a Lender Holdback ('Lender Holdback').  Lender shall release the Lender Holdback once Borrower provides evidence of the receipt of [INSERT CONDITIONS] to the satisfaction of Lender.  Evidence shall include but not be limited to paid invoices, documentation of the issuance of the [INSERT CONTENT], and any other documentation required by Lender.  Borrower understands, acknowledges, and agrees that Lender will not disburse funds in excess of the Lender Holdback.  In its sole discretion, Lender may use the Lender Holdback to protect its Security Instrument or to pay down the principal amount owed under the Loan.  Should Borrower fail to receive the [CONDITION] as required by Lender, Lender reserves the right, and Borrower authorizes Lender, to take all corrective actions necessary, including but not limited to, contacting the City of [EXAMPLE CITY] to issue the [CERTIFICATE OF OCCUPANCY OR OTHER CONDITION]."
         },
         "generalReserve": {
@@ -2879,6 +3054,7 @@
         "isImprovementReserve": {
           "type": "boolean",
           "title": "Tenant Improvement Reserve?",
+          "usage": "Use of this property should be combined with enableFeatures.enableImprovementReserve == true",
           "description": "A Tenant Improvement Reserve (aka TI Reserve) is typically used for commercial real estate loans.  It's money set aside specifically for tenant improvement projects or updates the borrower (as a landlord) is obligated to complete for their tenant.  If this option is selected, a borrower may request funds once per month from the lender for these purposes."
         },
         "improvementReserve": {
@@ -2942,6 +3118,11 @@
           "title": "Number of Days to Collect Per Diem",
           "usage": "CLIENT SPECIFIC"
         },
+        "fundingWireAmount": {
+          "type": "number",
+          "title": "Funding Wire Amount",
+          "usage": "CLIENT SPECIFIC"
+        },
         "brokerFees": {
           "type": "array",
           "title": "Broker Fees",
@@ -2969,7 +3150,8 @@
                   "Show as Credited",
                   "Deliver to Loan Servicer",
                   "Wire Instructions to be Provided",
-                  "See Attached Invoice"
+                  "See Attached Invoice",
+                  "Send Payment Directly to Payee"
                 ]
               }
             }
@@ -3002,7 +3184,8 @@
                   "Show as Credited",
                   "Deliver to Loan Servicer",
                   "Wire Instructions to be Provided",
-                  "See Attached Invoice"
+                  "See Attached Invoice",
+                  "Send Payment Directly to Payee"
                 ]
               }
             }
@@ -3035,7 +3218,8 @@
                   "Show as Credited",
                   "Deliver to Loan Servicer",
                   "Wire Instructions to be Provided",
-                  "See Attached Invoice"
+                  "See Attached Invoice",
+                  "Send Payment Directly to Payee"
                 ]
               },
               "payee": {
@@ -3054,6 +3238,7 @@
         "isPropertyManagement": {
           "type": "boolean",
           "title": "Assignment of Property Management Agreement",
+          "usage": "Use of this property should be combined with enableFeatures.enablePropertyManagement == true",
           "description": "Selecting 'Yes' will create a new document for the borrower, lender, and property manager to sign which, among other things, requires the property manager to agree that their fees owed by borrower are junior in priority to the borrower's payments under the loan."
         },
         "propertyManagement": {
@@ -3070,17 +3255,17 @@
                 "usage": "This property is ignored by the interpreter. It can optionally be sent as 'true' to prompt validation functions using the final validation schema to validate the correct properties within this object."
               },
               "isAllProperties": {
-                  "type": "boolean",
-                  "title": "Include all properties from this loan onto this assignment?",
-                  "usage": "Optional. Only used if there is more than one property on the loan."
+                "type": "boolean",
+                "title": "Include all properties from this loan onto this assignment?",
+                "usage": "Optional. Only used if there is more than one property on the loan."
               },
               "propertiesSelect": {
-                  "type": "array",
-                  "title": "Select the property(ies) to be included on this assignment",
-                  "usage": "Give the Property ID (APN) of each collateral property for which you want on this Assignment of Property Management. Only needed if isAllProperties == false, and there is more than one property on the loan.",
-                  "description": "This array collects the properties for which an Assignment of Property Management is needed.",
-                  "items": {
-                    "type": "string"
+                "type": "array",
+                "title": "Select the property(ies) to be included on this assignment",
+                "usage": "Give the Property ID (APN) of each collateral property for which you want on this Assignment of Property Management. Only needed if isAllProperties == false, and there is more than one property on the loan.",
+                "description": "This array collects the properties for which an Assignment of Property Management is needed.",
+                "items": {
+                  "type": "string"
                 }
               },
               "propertySelect": {
@@ -3124,16 +3309,18 @@
         },
         "isShtarIska": {
           "type": "boolean",
-          "title": "Include Shtar Iska?"
+          "title": "Include Shtar Iska?",
+          "usage": "Use of this property should be combined with enableFeatures.enableShtarIska == true"
         },
         "isThirdPartyAffiliate": {
           "type": "boolean",
           "title": "Third Party Affiliate?",
-          "usage": "Use of this property should be combined with enableFeatures.enableThirdPartyAffiliate == true"
+          "usage": "CLIENT SPECIFIC"
         },
         "isFirstPaymentLetter": {
           "type": "boolean",
-          "title": "Include First Payment Letter?"
+          "title": "Include First Payment Letter?",
+          "usage": "Use of this property should be combined with enableFeatures.enableFirstPaymentLetter == true"
         },
         "firstPaymentAmount": {
           "type": "number",
@@ -3157,17 +3344,20 @@
             "saleType": {
               "type": "string",
               "title": "When will the loan be sold?",
-              "enum": ["Concurrent", "After"]
+              "enum": [
+                "Concurrent",
+                "After"
+              ]
             },
             "assignee": {
               "type": "string",
               "title": "Select the loan purchaser or select 'Other' to enter the loan purchaser name(s) and address manually, or leave blank and a blank Assignment and Allonge will be produced.",
-              "usage": "Possible answers vary by user. Check the relevant question on the Lightning Docs form for options, or contact Lightning Docs support. 'Other' may be used to give an assignee name and address using the properties below."
+              "usage": "DEPRECATED. Use the 'assignments' array below. Support will be removed April 1, 2027."
             },
             "assigneeInformation": {
               "type": "object",
               "title": "Assignee Information",
-              "usage": "Only needed if assignee == 'Other'.",
+              "usage": "DEPRECATED. Use the 'assignments' array below. Support will be removed April 1, 2027.",
               "properties": {
                 "name": {
                   "type": "string",
@@ -3182,7 +3372,7 @@
             "isCollateralAssignment": {
               "type": "boolean",
               "title": "Change Assignment of Loan to a Collateral Assignment of Loan?",
-              "usage": "Only used if saleType == 'Concurrent'",
+              "usage": "Only used if saleType == 'Concurrent'. Use of this property should be combined with enableFeatures.enableCollateralAssignment == true",
               "description": "Select 'Yes' if you are anticipating the sale and assignment of the loan to an investor **which loan will be used as collateral** for an underlying obligation between the seller (assignor) and the purchaser (assignee). This option is typically used when the loan is being assigned to a warehouse lender and the Assignment is not being made as a 'true' assignment of the loan but rather solely for collateral purposes."
             },
             "collateralDate": {
@@ -3195,27 +3385,97 @@
               "type": "string",
               "format": "date",
               "title": "Assignment Date?",
-              "usage": "CLIENT SPECIFIC"
+              "usage": "DEPRECATED. Use the 'assignments' array below. Support will be removed April 1, 2027."
             },
             "isAssignmentResale": {
               "type": "boolean",
-              "title": "Include additional Assignment and Allonge for future assignment by Assignee?"
+              "title": "Include additional Assignment and Allonge for future assignment by Assignee?",
+              "usage": "DEPRECATED. Use the 'assignments' array below. Support will be removed April 1, 2027."
             },
             "isAssigneeUsingMers": {
               "type": "boolean",
               "title": "Insert MERS language for this purchaser?",
-              "description": "This will enable the purchaser / assignee of this loan to enter this loan into MERS after assignment. The lender of assignee must still submit the final documents to MERS after loan closing.  The field to enter a MIN is only available here if the MERS selection in the Standard Loan Terms section is set to 'No'. Otherwise, the MIN entered in *that* section will control."
+              "description": "This will enable the purchaser / assignee of this loan to enter this loan into MERS after assignment. The lender of assignee must still submit the final documents to MERS after loan closing.  The field to enter a MIN is only available here if the MERS selection in the Standard Loan Terms section is set to 'No'. Otherwise, the MIN entered in *that* section will control.",
+              "usage": "DEPRECATED. Use the 'assignments' array below. Support will be removed April 1, 2027."
             },
             "assigneeMersNumber": {
               "type": "string",
               "title": "Assignee MERS MIN Number",
-              "description": "Only needed if isAssigneeUsingMers == true && loan.isMERS == false."
+              "description": "Only needed if isAssigneeUsingMers == true && loan.isMERS == false.",
+              "usage": "DEPRECATED. Use the 'assignments' array below. Support will be removed April 1, 2027."
+            },
+            "assignments": {
+              "type": "array",
+              "title": "Produce Assignment(s) and Allonge(s)",
+              "usage": "All items in each object are optional, in that blanks will appear in the documents for any needed values.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "assignee": {
+                    "type": "string",
+                    "title": "Select a loan purchaser or enter the purchaser's name and address in the fields below.",
+                    "usage": "OPTIONAL. Possible answers vary by user. Check the relevant question on the Lightning Docs form for options, or contact Lightning Docs support. Using this key removes use of all keys below for information regarding the assignee, i.e., names, addresses, and mailing attention."
+                  },
+                  "assignmentDate": {
+                    "type": "string",
+                    "format": "date",
+                    "title": "Assignment Date?",
+                    "usage": "OPTIONAL."
+                  },
+                  "assigneeName": {
+                    "type": "string",
+                    "title": "Assignee Name(s) (i.e. Name(s) of Loan Buyer(s)) If there is more than one loan buyer, give the name of the loan purchaser as it should appear on the Assignment and Allonge",
+                    "usage": "OPTIONAL. Not to be used with 'assignee'."
+                  },
+                  "recordingAttention": {
+                    "type": "string",
+                    "title": "Attn: (if any)",
+                    "usage": "OPTIONAL. Not to be used with 'assignee'."
+                  },
+                  "assigneeAddress": {
+                    "title": "Assignee Address",
+                    "$ref": "#/definitions/address",
+                    "usage": "OPTIONAL (partially). Not to be used with 'assignee'. If any of the address values are used, all are REQURED."
+                  },
+                  "isAltRecordingAddress": {
+                    "type": "boolean",
+                    "title": "Deliver recorded documents to an address other than the Assignee address provided above?",
+                    "usage": "OPTOINAL. Not to be used with 'assignee'"
+                  },
+                  "altRecordingName": {
+                    "type": "string",
+                    "title": "Recipient (if different from assignee name above)",
+                    "usage": "OPTIONAL. Only used if isAltRecordingAddress == true"
+                  },
+                  "altRecordingAttention": {
+                    "type": "string",
+                    "title": "Attn: (if any)",
+                    "usage": "OPTIONAL. Only used if isAltRecordingAddress == true"
+                  },
+                  "altRecordingAddress": {
+                    "title": "Alternate Recording Address",
+                    "$ref": "#/definitions/address",
+                    "usage": "OPTIONAL (partially). Only used if isAltRecordingAddress == true. If any of the address values are used, all are REQURED."
+                  },
+                  "isMERSAssignee": {
+                    "type": "boolean",
+                    "title": "Is assignee using MERS?",
+                    "usage": "OPTIONAL. Can only be used once. Not available if loan.isMERS == true, or if an earlier iteration of this key was true."
+                  },
+                  "mersNumber": {
+                    "type": "string",
+                    "title": "MERS Mortgage Identification Number (MIN)",
+                    "usage": "OPTIONAL. Only used if isMERSAssignee == true in the same iteration."
+                  }
+                }
+              }
             }
           }
         },
         "isLoanSubordination": {
           "type": "boolean",
           "title": "Produce Loan Subordination Agreement / Intercreditor Agreement?",
+          "usage": "Use of this property should be combined with enableFeatures.enableIntercreditorAgreement == true",
           "description": "Select 'Yes' to include a Loan Subordination Agreement.  This document specifies that your loan is either senior or junior to another loan whether the other loan already exists or is closing around the time of your loan.  You may further choose between language types that are either more friendly to a senior lender or more friendly to a junior lender."
         },
         "loanSubordination": {
@@ -3245,17 +3505,26 @@
               "lenderType": {
                 "type": "string",
                 "title": "Lender is the",
-                "enum": ["Senior", "Subordinate"]
+                "enum": [
+                  "Senior",
+                  "Subordinate"
+                ]
               },
               "documentType": {
                 "type": "string",
                 "title": "Document Type",
-                "enum": ["Senior", "Junior"]
+                "enum": [
+                  "Senior",
+                  "Junior"
+                ]
               },
               "recording": {
                 "type": "string",
                 "title": "Document Recording",
-                "enum": ["Existing", "Concurrent"]
+                "enum": [
+                  "Existing",
+                  "Concurrent"
+                ]
               },
               "debtAmount": {
                 "type": "number",
@@ -3316,6 +3585,7 @@
         "isBorrowerCertification": {
           "type": "boolean",
           "title": "Include Borrower Release of Data Form?",
+          "usage": "Use of this property should be combined with enableFeatures.enableBorrowerCertification == true",
           "description": "Select 'Yes' to include a 'Borrower Certification and Authorization' form.  This document requires the borrower to certify that they understand lender may verify any information provided to it. Lender can share information with third parties including investors. The borrower also authorizes the sharing of this information and to receive phone, text, and email communications."
         },
         "isReferralFeeDisclosure": {
@@ -3337,12 +3607,47 @@
           "type": "boolean",
           "title": "Include Arms-Length Affidavit?",
           "usage": "CLIENT SPECIFIC"
+        },
+        "isSingleMemberAffidavit": {
+          "type": "boolean",
+          "title": "Include Single Member Affidavit?",
+          "usage": "CLIENT SPECIFIC"
+        },
+        "singleMemberAffidavitEntityName": {
+          "type": "string",
+          "title": "Entity Name",
+          "usage": "CLIENT SPECIFIC. Only used if isSingleMemberAffidavit == true."
         }
       }
     },
     "documentCustomization": {
       "type": "object",
       "properties": {
+        "customNotaryAcknowledgmentBaseState": {
+          "type": "string",
+          "title": "Notarized documents will be signed in [first collateral property state]. Another state may be selected if preferred.",
+          "usage": "Optional. By default, notary acknowledgments for the full set of closing documents are produced to comply with the requirements of the state wherein the first collateral property is located. This property can be sent to override that default with a different state."
+        },
+        "customNotaryAcknowledgmentSignerStates": {
+          "type": "array",
+          "title": "Select any individuals who will be signing outside of [the first property state or the state sent for customNotaryAcknowledgmentBaseState], then choose the appropriate state where they will sign.",
+          "usage": "Optional. Send the name of any natural person (that is, actual human signer) who is intended to sign outside the default state.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "individualName": {
+                "type": "string",
+                "title": "Select a signer",
+                "description": "The exact name of any individual (given elsewhere in the file) who will notarize at least one document. The string 'Lender' can be sent to give a signingState for the lender(s)."
+              },
+              "signingState": {
+                "type": "string",
+                "title": "Signing State",
+                "$ref": "#/definitions/states"
+              }
+            }
+          }
+        },
         "isRemoveArbitration": {
           "type": "boolean",
           "title": "Remove Arbitration Provisions?",
@@ -3381,6 +3686,7 @@
         "isIncludeMasterGuaranty": {
           "type": "boolean",
           "title": "Include Reference to a Master Guaranty (see ?)",
+          "usage": "Use of this property should be combined with enableFeatures.enableMasterGuaranty == true",
           "description": "It is unlikely you need this feature.  This is only to be used if you have a Master Guaranty that has been signed by your guarantor in advance where they have agreed to guaranty multiple loans in a single guaranty.  Contact Lightning Docs support for more info."
         },
         "masterGuarantyDate": {
@@ -3409,7 +3715,7 @@
         "isExcludeLCI": {
           "type": "boolean",
           "title": "Exclude the Lender's Closing Instructions?",
-          "usage": "Optional when at least one collateral property is in New York."
+          "usage": "Optional when at least one collateral property is in New York. Use of this property should be combined with enableFeatures.enableExcludeLCI == true"
         },
         "isOccupancyRequirement": {
           "type": "boolean",
@@ -3489,7 +3795,11 @@
         "reportingFrequency": {
           "type": "string",
           "title": "Financial reporting frequency",
-          "enum": ["Annually", "Semiannually", "Quarterly"],
+          "enum": [
+            "Annually",
+            "Semiannually",
+            "Quarterly"
+          ],
           "usage": "CLIENT SPECIFIC"
         },
         "isMarkToMarket": {
@@ -3521,12 +3831,34 @@
         "isAdditionalCovenants": {
           "type": "boolean",
           "title": "Include Additional Covenants(s)?",
-          "usage": "Used to add additional custom provisions, hidden behind a permission."
+          "usage": "Used to add additional custom provisions, hidden behind a permission. Use of this property should be combined with enableFeatures.enableAdditionalCovenants == true"
         },
         "additionalCovenants": {
           "type": "string",
           "title": "Additional Covenants",
           "usage": "Only needed if isAdditionalCovenants == true"
+        },
+        "additionalProvisions": {
+          "type": "array",
+          "title": "Additional provisions to be included in the transaction.",
+          "usage": "CLIENT SPECIFIC",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string",
+                "title": "Category"
+              },
+              "header": {
+                "type": "string",
+                "title": "Header"
+              },
+              "provision": {
+                "type": "string",
+                "title": "Provision Text"
+              }
+            }
+          }
         }
       }
     },
@@ -3591,7 +3923,13 @@
           "collateralType": {
             "type": "string",
             "title": "Type of UCC Filing",
-            "enum": ["bank", "blanket", "other", "both", "custom"],
+            "enum": [
+              "bank",
+              "blanket",
+              "other",
+              "both",
+              "custom"
+            ],
             "description": "Select: 'blanket' for a Blanket UCC filing, 'other' to enter a list of specific personal property, 'both' to do both of the above, and 'custom' to attach a custom list or exhibit to the UCC filing."
           },
           "memberNumber": {
@@ -3667,7 +4005,7 @@
           "entitySelect": {
             "type": "string",
             "title": "Entity Being Pledged",
-            "usage": "Can be used to select a debtor from among the entity borrowers. Use of this property obviates the need for all other properties in this object (entityName, entityType, entityState, signers, and owners). borrowers.complexOwners.formationState must be provided even for owners who are individuals."
+            "usage": "Can be used to select a debtor from among the entity borrowers. Use of this property obviates the need for all other properties in this object (entityName, entityType, entityState, signers, and owners). borrowers.complexOwners.formationState must be provided even for owners who are individuals. Send 'Other' to specify those values explicityly in a given iteration."
           },
           "entityName": {
             "type": "string",
